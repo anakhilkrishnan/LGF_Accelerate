@@ -1,0 +1,24 @@
+# IDE & OS Specific Files
+.vscode/
+.idea/
+.DS_Store
+*.swp
+
+# CMake Build Directories (Root Level)
+# Ignores build/, buildgpu/, build_cpu/, etc. at the project root
+build*/
+Build*/
+out/
+
+# Executable Binaries
+# Ignore the compiled solver binaries inside the Exec subfolders
+# Build artifacts and binaries
+lgfpoisson
+*.o
+*.ex
+plt*
+post*
+!**/postProcess.py
+
+Exec/build*/
+Exec/Build*/
