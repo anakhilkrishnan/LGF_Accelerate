@@ -1,0 +1,140 @@
+Final Memory Profile Report Across Processes:
+      | Name            |       Current      |   High Water Mark  |
+      |-----------------+--------------------+--------------------|
+      | MemPool         |  8192 ... 8192  KB |  8192 ... 8192  KB |
+      | Fab             |     0 ... 0      B |   433 ... 433   KB |
+      | BoxArray        |     0 ... 0      B |   344 ... 344    B |
+      |-----------------+--------------------+--------------------|
+      | Total           |  8192 ... 8192  KB |                    |
+
+      | Name            |      Current #     |  High Water Mark # |
+      |-----------------+--------------------+--------------------|
+      | BoxArray Innard |      0 ... 0       |      1 ... 1       |
+      | MultiFab        |      0 ... 0       |      3 ... 3       |
+
+ * Proc VmPeak          VmSize               VmHWM                VmRSS             
+   [   12 ... 12    GB] [   12 ... 12    GB] [  487 ... 487   MB] [  487 ... 487   MB]
+
+ * Node total           free                 free+buffers+cached  shared            
+   [   15 ... 15    GB] [ 6876 ... 6876  MB] [   10 ... 10    GB] [ 1750 ... 1750  MB]
+
+Final Memory Profile Report Across Processes:
+      | Name            |       Current      |   High Water Mark  |
+      |-----------------+--------------------+--------------------|
+      | MemPool         |  8192 ... 8192  KB |  8192 ... 8192  KB |
+      | Fab             |     0 ... 0      B |  1734 ... 1734  KB |
+      | BoxArray        |     0 ... 0      B |  1304 ... 1304   B |
+      |-----------------+--------------------+--------------------|
+      | Total           |  8192 ... 8192  KB |                    |
+
+      | Name            |      Current #     |  High Water Mark # |
+      |-----------------+--------------------+--------------------|
+      | BoxArray Innard |      0 ... 0       |      1 ... 1       |
+      | MultiFab        |      0 ... 0       |      3 ... 3       |
+
+ * Proc VmPeak          VmSize               VmHWM                VmRSS             
+   [   12 ... 12    GB] [   12 ... 12    GB] [  487 ... 487   MB] [  487 ... 487   MB]
+
+ * Node total           free                 free+buffers+cached  shared            
+   [   15 ... 15    GB] [ 6897 ... 6897  MB] [   10 ... 10    GB] [ 1731 ... 1731  MB]
+
+Final Memory Profile Report Across Processes:
+      | Name            |       Current      |   High Water Mark  |
+      |-----------------+--------------------+--------------------|
+      | MemPool         |  8192 ... 8192  KB |  8192 ... 8192  KB |
+      | Fab             |     0 ... 0      B |  6936 ... 6936  KB |
+      | BoxArray        |     0 ... 0      B |  5144 ... 5144   B |
+      |-----------------+--------------------+--------------------|
+      | Total           |  8192 ... 8192  KB |                    |
+
+      | Name            |      Current #     |  High Water Mark # |
+      |-----------------+--------------------+--------------------|
+      | BoxArray Innard |      0 ... 0       |      1 ... 1       |
+      | MultiFab        |      0 ... 0       |      3 ... 3       |
+
+ * Proc VmPeak          VmSize               VmHWM                VmRSS             
+   [   12 ... 12    GB] [   12 ... 12    GB] [  488 ... 488   MB] [  488 ... 488   MB]
+
+ * Node total           free                 free+buffers+cached  shared            
+   [   15 ... 15    GB] [ 6457 ... 6457  MB] [   10 ... 10    GB] [ 1849 ... 1849  MB]
+
+Final Memory Profile Report Across Processes:
+      | Name            |       Current      |   High Water Mark  |
+      |-----------------+--------------------+--------------------|
+      | MemPool         |  8192 ... 8192  KB |  8192 ... 8192  KB |
+      | Fab             |     0 ... 0      B |  7776 ... 7776  KB |
+      | BoxArray        |     0 ... 0      B |    20 ... 20    KB |
+      |-----------------+--------------------+--------------------|
+      | Total           |  8192 ... 8192  KB |                    |
+
+      | Name            |      Current #     |  High Water Mark # |
+      |-----------------+--------------------+--------------------|
+      | BoxArray Innard |      0 ... 0       |      1 ... 1       |
+      | MultiFab        |      0 ... 0       |      3 ... 3       |
+
+ * Proc VmPeak          VmSize               VmHWM                VmRSS             
+   [   12 ... 12    GB] [   12 ... 12    GB] [  489 ... 489   MB] [  489 ... 489   MB]
+
+ * Node total           free                 free+buffers+cached  shared            
+   [   15 ... 15    GB] [ 6196 ... 6196  MB] [   10 ... 10    GB] [ 1871 ... 1871  MB]
+
+Final Memory Profile Report Across Processes:
+      | Name            |       Current      |   High Water Mark  |
+      |-----------------+--------------------+--------------------|
+      | MemPool         |  8192 ... 8192  KB |  8192 ... 8192  KB |
+      | Fab             |     0 ... 0      B |  6936 ... 6936  KB |
+      | BoxArray        |     0 ... 0      B |  5144 ... 5144   B |
+      |-----------------+--------------------+--------------------|
+      | Total           |  8192 ... 8192  KB |                    |
+
+      | Name            |      Current #     |  High Water Mark # |
+      |-----------------+--------------------+--------------------|
+      | BoxArray Innard |      0 ... 0       |      1 ... 1       |
+      | MultiFab        |      0 ... 0       |      3 ... 3       |
+
+ * Proc VmPeak          VmSize               VmHWM                VmRSS             
+   [   12 ... 12    GB] [   12 ... 12    GB] [  489 ... 489   MB] [  489 ... 489   MB]
+
+ * Node total           free                 free+buffers+cached  shared            
+   [   15 ... 15    GB] [ 6155 ... 6155  MB] [   10 ... 10    GB] [ 1861 ... 1861  MB]
+
+Final Memory Profile Report Across Processes:
+      | Name            |       Current      |   High Water Mark  |
+      |-----------------+--------------------+--------------------|
+      | MemPool         |  8192 ... 8192  KB |  8192 ... 8192  KB |
+      | Fab             |     0 ... 0      B |  6534 ... 6534  KB |
+      | BoxArray        |     0 ... 0      B |  1304 ... 1304   B |
+      |-----------------+--------------------+--------------------|
+      | Total           |  8192 ... 8192  KB |                    |
+
+      | Name            |      Current #     |  High Water Mark # |
+      |-----------------+--------------------+--------------------|
+      | BoxArray Innard |      0 ... 0       |      1 ... 1       |
+      | MultiFab        |      0 ... 0       |      3 ... 3       |
+
+ * Proc VmPeak          VmSize               VmHWM                VmRSS             
+   [   12 ... 12    GB] [   12 ... 12    GB] [  490 ... 490   MB] [  490 ... 490   MB]
+
+ * Node total           free                 free+buffers+cached  shared            
+   [   15 ... 15    GB] [ 6246 ... 6246  MB] [   10 ... 10    GB] [ 1837 ... 1837  MB]
+
+Final Memory Profile Report Across Processes:
+      | Name            |       Current      |   High Water Mark  |
+      |-----------------+--------------------+--------------------|
+      | MemPool         |  8192 ... 8192  KB |  8192 ... 8192  KB |
+      | Fab             |     0 ... 0      B |  6337 ... 6337  KB |
+      | BoxArray        |     0 ... 0      B |   344 ... 344    B |
+      |-----------------+--------------------+--------------------|
+      | Total           |  8192 ... 8192  KB |                    |
+
+      | Name            |      Current #     |  High Water Mark # |
+      |-----------------+--------------------+--------------------|
+      | BoxArray Innard |      0 ... 0       |      1 ... 1       |
+      | MultiFab        |      0 ... 0       |      3 ... 3       |
+
+ * Proc VmPeak          VmSize               VmHWM                VmRSS             
+   [   12 ... 12    GB] [   12 ... 12    GB] [  490 ... 490   MB] [  490 ... 490   MB]
+
+ * Node total           free                 free+buffers+cached  shared            
+   [   15 ... 15    GB] [ 6116 ... 6116  MB] [   10 ... 10    GB] [ 1853 ... 1853  MB]
+

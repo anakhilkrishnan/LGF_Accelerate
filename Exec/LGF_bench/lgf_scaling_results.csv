@@ -1,0 +1,8 @@
+Test_Type,n_cell,max_grid_size,total_compute_time_s,max_rank_time_s
+Scale_Domain,128,32,0.479482352,0.480021335
+Scale_Domain,256,32,4.01619136,4.016946783
+Scale_Domain,512,32,50.70274278,50.70446968
+Scale_Boxes,512,16,120.5174968,120.5209067
+Scale_Boxes,512,32,49.76975074,49.77096283
+Scale_Boxes,512,64,48.87890426,48.879589
+Scale_Boxes,512,128,74.39893613,74.39953545
