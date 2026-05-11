@@ -22,3 +22,9 @@ post*
 
 Exec/build*/
 Exec/Build*/
+
+# Ignore the documentation files, except the ones needed to rebuild docs
+Docs/**
+!Docs/source
+!Docs/source/conf.py
+!Docs/source/index.rst
