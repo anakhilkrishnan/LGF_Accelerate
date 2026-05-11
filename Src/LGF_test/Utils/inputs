@@ -8,5 +8,7 @@ amrex.max_gpu_streams = 4
 domain_lo = -5.0 -5.0 -5.0
 domain_hi = 5.0 5.0 5.0
 
+use_FMM = false
+
 write_plot = true
 plot_prefix = "./Results/plttaggpu"

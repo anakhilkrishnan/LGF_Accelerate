@@ -43,7 +43,11 @@ def run_suite():
             for cell in params["n_cells"]:
                 for grid in params["max_grid_sizes"]:
                     print(f"  Testing n_cell={cell}, max_grid_size={grid}...", end=" ", flush=True)
-                    
+
+                    NUM_THREADS = "16"
+                    # Set the OpenMP environment variable for the child process
+                    os.environ["OMP_NUM_THREADS"] = NUM_THREADS
+
                     # AMReX arguments: force write_plot=0 and turn off amrex verbosity
                     cmd = [
                         MPI_CMD, "-n", NUM_RANKS,  # <--- MPI Wrapper

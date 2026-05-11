@@ -16,9 +16,12 @@ void initializeSourceMultiFab(amrex::MultiFab& phi_mf, amrex::Geometry& phi_geom
     GpuArray<amrex::Real, AMREX_SPACEDIM> dx = phi_geom.CellSizeArray();
     GpuArray<amrex::Real, AMREX_SPACEDIM> prob_lo = phi_geom.ProbLoArray();
     
-    for (MFIter mfi(phi_mf); mfi.isValid(); ++mfi)
+#ifdef AMREX_USE_OMP
+    #pragma omp parallel if (amrex::Gpu::notInLaunchRegion())
+#endif
+    for (MFIter mfi(phi_mf, amrex::TilingIfNotGPU()); mfi.isValid(); ++mfi)
     {
-        const amrex::Box& vbx = mfi.validbox();
+        const amrex::Box& vbx = mfi.tilebox();
         auto const& phiarr = phi_mf.array(mfi);
         ParallelFor(vbx, [=] AMREX_GPU_DEVICE(int i, int j, int k)
             {

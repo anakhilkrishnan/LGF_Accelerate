@@ -4,7 +4,10 @@ add_executable(lgfpoisson
                 MyFunctions.H
                 SourceField.H)
 
-setup_target_for_cuda_compilation(lgfpoisson)
+# setup_target_for_cuda_compilation(lgfpoisson)
+
+find_package(OpenMP REQUIRED)
+target_link_libraries(lgfpoisson PRIVATE OpenMP::OpenMP_CXX)
 
 target_include_directories(lgfpoisson PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(lgfpoisson PRIVATE LGF_core_lib AMReX::amrex)

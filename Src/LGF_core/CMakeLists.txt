@@ -6,7 +6,7 @@ add_library(LGF_core_lib STATIC
     LGFCore.H
 )
 
-setup_target_for_cuda_compilation(LGF_core_lib)
+# setup_target_for_cuda_compilation(LGF_core_lib)
 
 # Tell CMake where the headers (like LGFCore.H) are
 target_include_directories(LGF_core_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})

@@ -27,9 +27,12 @@ amrex::Vector<int> tagSource(const amrex::MultiFab& phifab, const amrex::Real so
     // obtaining raw pointers for GPU
     int* d_flags_ptr = d_is_box_tagged.dataPtr();
 
-    for(MFIter mfi(phifab); mfi.isValid(); ++mfi)
+#ifdef AMREX_USE_OMP
+    #pragma omp parallel if (amrex::Gpu::notInLaunchRegion())
+#endif
+    for(MFIter mfi(phifab, amrex::TilingIfNotGPU()); mfi.isValid(); ++mfi)
     {
-        const Box& bx = mfi.validbox();
+        const Box& bx = mfi.tilebox();
         auto const& phi_arr = phifab.const_array(mfi);
         const int local_idx = mfi.LocalIndex();
 

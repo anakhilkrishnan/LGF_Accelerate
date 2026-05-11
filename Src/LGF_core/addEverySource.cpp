@@ -40,10 +40,13 @@ void addEverySourceBox(const amrex::MultiFab& source, amrex::MultiFab& target, c
     amrex::Box dom = geom.Domain();
     
     // Loop over target boxes in a separate MFIter
+#ifdef AMREX_USE_OMP
+    #pragma omp parallel if (amrex::Gpu::notInLaunchRegion())
+#endif
     for (amrex::MFIter mfi(target, amrex::TilingIfNotGPU()); mfi.isValid(); ++mfi)
     {
         const amrex::Box& targetbox = mfi.growntilebox(target.nGrow());
-        const amrex::Box& valid_box = mfi.validbox();
+        const amrex::Box& valid_box = mfi.tilebox();
         const Array4<Real>& phi = target.array(mfi);
 
         amrex::ParallelFor(targetbox, [=] AMREX_GPU_DEVICE (int i, int j, int k)

@@ -35,6 +35,7 @@ void extendedMain()
     amrex::Real source_tag_thresh;
     amrex::Array<amrex::Real,AMREX_SPACEDIM> phy_dom_lo, phy_dom_hi;
     bool write_plot = false;
+    bool use_FMM = false;
 
     // setting a default plotfile prefix in case not specified in inputs
     std::string plot_prefix = "./Results/plt";
@@ -47,6 +48,7 @@ void extendedMain()
     pp.get("domain_hi", phy_dom_hi);
     pp.get("tagging_threshold", source_tag_thresh);
 
+    pp.query("use_FMM", use_FMM);
     pp.query("write_plot", write_plot);
     pp.query("plot_prefix", plot_prefix);
 
@@ -92,11 +94,18 @@ void extendedMain()
     // running the tagging algorithmn and obtaining the box tags as an array of 0s and 1s
     amrex::Vector<int> box_tag_arr = tagSource(sourceMF, source_tag_thresh);
 
-    // performing addition of box values
-    addEverySourceBox(sourceMF, targetMF, geom, box_tag_arr);
+    if (use_FMM)
+    {
+        
+    }
+    else
+    {
+        // performing addition of box values
+        addEverySourceBox(sourceMF, targetMF, geom, box_tag_arr);
 
-    // this line is not needed because the code doesn't use the MF again at all, and the plot doesn't use ghost cells
-    // targetMF.FillBoundary(geom.periodicity());
+        // this line is not needed because the code doesn't use the MF again at all, and the plot doesn't use ghost cells
+        // targetMF.FillBoundary(geom.periodicity());
+    }
 
     // marking end time and elapsed time
     auto compute_end_time = amrex::second();
@@ -108,15 +117,8 @@ void extendedMain()
 
     for (MFIter mfi(tagRegion); mfi.isValid(); ++mfi) 
     {
-        if (box_tag_arr[mfi.LocalIndex()] == 1) 
-        {
-            // If active, fill the entire box with 1.0 (on the GPU)
-            tagRegion[mfi].setVal<RunOn::Device>(1.0); 
-        } else 
-        {
-            // If inactive, fill the entire box with 0.0 (on the GPU)
-            tagRegion[mfi].setVal<RunOn::Device>(0.0); 
-        }
+        amrex::Real val = (box_tag_arr[mfi.LocalIndex()] == 1) ? 1.0 : 0.0;
+        tagRegion[mfi].setVal<RunOn::Device>(val);
     }
 
     if (write_plot)
