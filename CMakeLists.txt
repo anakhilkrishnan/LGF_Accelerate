@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(LGF_Project LANGUAGES C CXX CUDA)
+# project(LGF_Project LANGUAGES C CXX CUDA)
 
 # # set of default values for a typical gpu run
 # set(CMAKE_BUILD_TYPE "Release" CACHE STRING "cmake build type")
