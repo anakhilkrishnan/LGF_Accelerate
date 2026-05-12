@@ -10,5 +10,5 @@ domain_hi = 5.0 5.0 5.0
 
 use_FMM = false
 
-write_plot = true
+write_plot = false
 plot_prefix = "./Results/plttaggpu"

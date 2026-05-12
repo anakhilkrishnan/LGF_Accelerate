@@ -1,0 +1,3 @@
+[submodule "Src/ThirdParty/BBFMM2D"]
+	path = Src/ThirdParty/BBFMM2D
+	url = https://github.com/sivaramambikasaran/BBFMM2D.git

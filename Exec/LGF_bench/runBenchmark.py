@@ -47,7 +47,7 @@ def run_suite():
                     NUM_THREADS = "16"
                     # Set the OpenMP environment variable for the child process
                     os.environ["OMP_NUM_THREADS"] = NUM_THREADS
-
+                    
                     # AMReX arguments: force write_plot=0 and turn off amrex verbosity
                     cmd = [
                         MPI_CMD, "-n", NUM_RANKS,  # <--- MPI Wrapper

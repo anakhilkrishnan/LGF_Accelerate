@@ -96,7 +96,8 @@ void extendedMain()
 
     if (use_FMM)
     {
-        
+        // using BBFMM2d to compute the result of the LGF problem
+        solveFMM(sourceMF, targetMF, geom);
     }
     else
     {

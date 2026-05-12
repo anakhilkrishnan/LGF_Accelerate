@@ -1,7 +1,3 @@
-#include <AMReX_MultiFab.H>
-#include <AMReX_ParallelDescriptor.H>
-#include <AMReX_BLProfiler.H>
-
 #include <LGFCore.H>
 
 using namespace amrex;

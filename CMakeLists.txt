@@ -14,10 +14,10 @@ cmake_minimum_required(VERSION 3.16)
 project(LGF_Project LANGUAGES C CXX)
 
 # set of default values for typical cpu run
-set(CMAKE_BUILD_TYPE "Release" CACHE STRING "cmake build type")
+set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "cmake build type")
 set(AMReX_SPACEDIM "2" CACHE STRING "Spatial Dimension")
 set(AMReX_MPI YES CACHE BOOL "Enable MPI")
-set(AMReX_OMP ON CACHE BOOL "Enable OpenMP")
+set(AMReX_OMP OFF CACHE BOOL "Enable OpenMP")
 set(AMReX_TINY_PROFILE YES CACHE BOOL "Enable Tiny Profiling")
 set(AMReX_MEM_PROFILE YES CACHE BOOL "Enable Memory Profiling")
 
@@ -44,6 +44,9 @@ else()
   find_package(AMReX REQUIRED PATHS ${AMReX_ROOT}/lib/cmake/AMReX/AMReXConfig.cmake)
 
 endif()
+
+# find Eigen3 installation on the system
+find_package(Eigen3 REQUIRED)
 
 # adding additional repositories
 add_subdirectory(Src/LGF_core)
