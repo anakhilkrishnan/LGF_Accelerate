@@ -28,4 +28,5 @@ Docs/**
 !Docs/source
 !Docs/source/conf.py
 !Docs/source/index.rst
-!Docs/source/manual/*.rst
+!Docs/source/manual/
+!Docs/source/manual/**
