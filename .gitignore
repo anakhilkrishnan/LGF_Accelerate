@@ -28,3 +28,4 @@ Docs/**
 !Docs/source
 !Docs/source/conf.py
 !Docs/source/index.rst
+!Docs/source/manual/*
