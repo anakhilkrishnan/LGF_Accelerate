@@ -90,6 +90,7 @@ void solveFMM(const amrex::MultiFab& source, amrex::MultiFab& target, const amre
     }
     
     double C = 0.2573420803;
+    double C_prime = C - (1.0 / (4.0 * M_PI)) * std::log(dx[0] * dx[0]); 
 
     for (amrex::MFIter mfi(target); mfi.isValid(); ++mfi) 
     {
@@ -104,7 +105,7 @@ void solveFMM(const amrex::MultiFab& source, amrex::MultiFab& target, const amre
 
                 // update corrected target values
                 double pure_log_potential = calculated_potentials[flat_idx];
-                tar_arr(i, j, 0) = (1.0 / (2.0 * M_PI)) * pure_log_potential + (C * total_charge);
+                tar_arr(i, j, 0) = (1.0 / (2.0 * M_PI)) * pure_log_potential + (C_prime * total_charge);
             }
         }
     }

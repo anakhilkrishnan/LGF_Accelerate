@@ -43,7 +43,8 @@ public:
             
             // Reverse-engineer the physical value into pure-log space
             double C = 0.2573420803;
-            return 2.0 * M_PI * (lgf_exact - C);
+            double C_prime = C - (1.0 / (4.0 * M_PI)) * std::log(cell_dx * cell_dx);
+            return 2.0 * M_PI * (lgf_exact - C_prime);
         }
 
         // --- C. The Far-Field (Continuous) ---

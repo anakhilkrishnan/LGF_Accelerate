@@ -47,7 +47,7 @@ exhale_args = {
     "exhaleExecutesDoxygen": True,
     "exhaleDoxygenStdin": textwrap.dedent("""
     INPUT                = ../../Src
-    FILE_PATTERNS        = *.H *.h
+    FILE_PATTERNS        = *.H *.hpp
     RECURSIVE            = YES
     EXTRACT_ALL          = YES
     GENERATE_XML         = YES
