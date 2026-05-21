@@ -26,6 +26,17 @@ exclude_patterns = []
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
+# -- Options for MathJax output -------------------------------------------
+
+mathjax3_config = {
+    'tex': {
+        'macros': {
+            'odif': [r'\mathrm{d}#1', 1],        # usage: \odif{x} -> dx
+            'abs': [r'\left|#1\right|', 1],     # usage: \abs{x} -> |x|
+        }
+    }
+}
+
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
@@ -55,7 +66,8 @@ exhale_args = {
     GENERATE_LATEX       = NO
     QUIET                = YES
     WARN_IF_UNDOCUMENTED = NO
-    EXCLUDE_PATTERNS     = */main.cpp
+    EXCLUDE_PATTERNS     = */main.cpp \
+                           */ThirdParty/BBFMM2D/*
     ENABLE_PREPROCESSING = YES
     MACRO_EXPANSION      = YES
     PREDEFINED          += AMREX_GPU_DEVICE= \\
@@ -66,7 +78,10 @@ exhale_args = {
 }
 
 # Note: When making changes to the above before rebuilding, always perform
+# (from the Docs/ dir)
 # rm -rf source/_doxygen source/api source/_build source/.doctrees
+# Additionally, cleanup pre-existing builds
+# rm -rf build
 # to ensure that any stored data is wiped before fresh build
 
 # Note: To produce a fresh build, perform
@@ -88,6 +103,12 @@ latex_elements = {
     "preamble": r"""
         \usepackage{lmodern}
         \usepackage{microtype}
+        \usepackage{amsmath}
+        \usepackage{bm}
+        \usepackage{physics}
+        \usepackage{amssymb}
+        \usepackage{derivative}
+        \usepackage{float}
     """,
 
     # Put the table of contents on its own page
@@ -100,7 +121,7 @@ latex_documents = [
         "index",              # source start file (index.rst)
         "LGF_core.tex",       # output .tex filename
         "LGF Accelerate Docs",# document title
-        "Your Name",          # author
+        "Akhil Krishnan",          # author
         "manual",             # documentclass: 'manual' or 'howto'
     ),
 ]

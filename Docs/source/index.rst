@@ -10,10 +10,14 @@ LGF_Accelerate Documentation
    :maxdepth: 2
    :caption: User Manual
 
+   manual/overview
+
    manual/theory
 
+   manual/numerics
+   
 .. toctree::
    :maxdepth: 2
-   :caption: API Reference
+   :caption: API Code Reference
 
    api/library_root
