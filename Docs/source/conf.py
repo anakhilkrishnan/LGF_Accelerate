@@ -16,12 +16,14 @@ release = '1.0.0'
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
-extensions = ["breathe", "exhale"]
+extensions = ["breathe", "exhale", "sphinxcontrib.bibtex"]
 
 templates_path = ['_templates']
 exclude_patterns = []
 
-
+# -- Options for bibliography ------------------------------------------------
+bibtex_bibfiles = ["manual/refs.bib"]
+bibtex_default_style = "plain"
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

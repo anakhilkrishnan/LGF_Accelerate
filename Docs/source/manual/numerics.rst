@@ -67,15 +67,19 @@ obtained via discrete convolution:
 
 .. math::
 
-   \Phi(\vec{n}) = \sum_{\vec{n}_0} G(\vec{n} - \vec{n}_0) f(\vec{n}_0)
+    \Phi(\vec{n}) = \sum_{\vec{n}_0} G_L(\vec{n} - \vec{n}_0) f(\vec{n}_0)
 
-A detailed explanation of computing the LGF for a given source-target cell pair
-is presented in CREF. In summary, the discrete Laplacian :math:`\mathcal{L}` is
-inverted using Fourier integrals, yielding the form
 
-.. :math::
+An comprehensive explanation of the method used to compute the LGF for a given
+source-target cell pair is presented in Liska and Colonius' work
+:footcite:`LISKA201476`. In summary, the discrete Laplacian :math:`\mathcal{L}`
+operator is inverted using Fourier integrals, yielding the form
 
-    INSERT THE FOURIER INTEGRAL FORM OF THE LGF
+.. math::
+
+    G_L(\vec{n}) = \frac{1}{(2\pi)^2} \int\int_{[-\pi, \pi]^2} \frac{1 - \cos{(\vec{\xi} \cdot \vec{n})}}{4 - 2\cos{(\xi_1)}- 2\cos{(\xi_2)}} \odif{\xi_1}\odif{\xi_2}
+
+Where :math:`\vec{\xi} = (\xi_1, \xi_2)` are Fourier modes.
 
 To compute the LGF more efficiently for a desired order of error, the
 source-target cell pairs are split into Near-Field and Far-Field type, and LGFs
@@ -85,9 +89,10 @@ Near-Field: Exact Integration
 -----------------------------
 
 Near-Field contributions are computed by direct evaluation of the aforementioned
-Fourier Integral form. CREF uses symmetry to reduce the integral to a 1D
-integral, which is precomputed using Gauss-Kronod quadrature and stored as a
-lookup table.
+Fourier Integral form. Liska and Colonius :footcite:`LISKA201476` use symmetry
+to reduce the integral to a 1D integral, which is precomputed using Gauss-Kronod
+quadrature and stored as a lookup table. The code developed by Hou and Colonius
+:footcite:`hou2024lattice` was used to generate the lookup table.
 
 Far-Field: Asymptotic Expansion
 -------------------------------
@@ -108,11 +113,33 @@ kernels.
 Convolution Accelerating Methods
 =================================
 
-The library integrates with **BBFMM2D** to handle complexity:
+The far-field contributions are handled by **BBFMM2D** (Black Box Fast Multipole
+Method in 2 Dimensions), an open-source KI-FMM implementation in C++. Its
+simplicity and lack of parallelizing/memory managing layers made it an idea
+choice to test with the problem at hand.
 
-* **Tagging**: Identifies significant source terms using a user-defined
-  threshold.
-* **Consolidation**: Prepares data for FMM processing.
-* **Kernel Interception**: The :cpp:class:`kernel_LGF` intercepts point-to-point
-  interactions to inject discrete corrections.
+BBFMM2D performs the following steps:
+
+#. Constructs a quadtree representation of the domain based on the positions of
+   the source points.
+#. Replaces the source points with equivalent source distributions on known
+   proxy surfaces using Chebyshev interpolation.
+#. Computes multipole expansions of the proxy distribution rapidly.
+#. Performs an upward pass of the tree, computing local expansions for solutions
+   at proxy surfaces using the multipole expansions of the proxy distributions.
+#. Performs a downward pass of the tree, extracting solutions at target
+   locations.
+
+BBFMM2D has the following limitations:
+
+* The code is fully **serial**, it can only use a single CPU core.
+* The target points **cannot** be different from the source points, negating the
+  advantage from limiting computations to :math:`\mathrm{supp}(f)` by box
+  tagging.
+* The inbuilt :math:`\log{\vec{r}}` kernel represents the continuous Green's
+  function, not the LGF. This introduces a systematic far-field error that would
+  otherwise have been corrected for when using an asymptotic expansion to
+  approximate the LGF in the far-field.
+
+.. footbibliography::
 

@@ -1,0 +1,116 @@
+@article{SHUKLA2014252,
+title = {Isotropic finite volume discretization},
+journal = {Journal of Computational Physics},
+volume = {276},
+pages = {252-290},
+year = {2014},
+issn = {0021-9991},
+doi = {https://doi.org/10.1016/j.jcp.2014.07.025},
+url = {https://www.sciencedirect.com/science/article/pii/S002199911400518X},
+author = {Ratnesh K. Shukla and Pritam Giri},
+keywords = {Finite volume method, Isotropic discretization, Rotational invariance},
+abstract = {Finite volume methods traditionally employ dimension by dimension extension of the one-dimensional reconstruction and averaging procedures to achieve spatial discretization of the governing partial differential equations on a structured Cartesian mesh in multiple dimensions. This simple approach based on tensor product stencils introduces an undesirable grid orientation dependence in the computed solution. The resulting anisotropic errors lead to a disparity in the calculations that is most prominent between directions parallel and diagonal to the grid lines. In this work we develop isotropic finite volume discretization schemes which minimize such grid orientation effects in multidimensional calculations by eliminating the directional bias in the lowest order term in the truncation error. Explicit isotropic expressions that relate the cell face averaged line and surface integrals of a function and its derivatives to the given cell area and volume averages are derived in two and three dimensions, respectively. It is found that a family of isotropic approximations with a free parameter can be derived by combining isotropic schemes based on next-nearest and next-next-nearest neighbors in three dimensions. Use of these isotropic expressions alone in a standard finite volume framework, however, is found to be insufficient in enforcing rotational invariance when the flux vector is nonlinear and/or spatially non-uniform. The rotationally invariant terms which lead to a loss of isotropy in such cases are explicitly identified and recast in a differential form. Various forms of flux correction terms which allow for a full recovery of rotational invariance in the lowest order truncation error terms, while preserving the formal order of accuracy and discrete conservation of the original finite volume method, are developed. Numerical tests in two and three dimensions attest the superior directional attributes of the proposed isotropic finite volume method. Prominent anisotropic errors, such as spurious asymmetric distortions on a circular reaction–diffusion wave that feature in the conventional finite volume implementation are effectively suppressed through isotropic finite volume discretization. Furthermore, for a given spatial resolution, a striking improvement in the prediction of kinetic energy decay rate corresponding to a general two-dimensional incompressible flow field is observed with the use of an isotropic finite volume method instead of the conventional discretization.}
+}
+
+@ARTICLE{Chorin1968745,
+	author = {Chorin, Alexandre Joel},
+	title = {Numerical solution of the navier-stokes equations},
+	year = {1968},
+	journal = {Mathematics of Computation},
+	volume = {22},
+	number = {104},
+	pages = {745 – 762},
+	doi = {10.1090/S0025-5718-1968-0242392-2},
+	url = {https://www.scopus.com/inward/record.uri?eid=2-s2.0-84968510911&doi=10.1090%2fS0025-5718-1968-0242392-2&partnerID=40&md5=40e0c8ba9594b547cdd7a544c06a82dd},
+	type = {Article},
+	publication_stage = {Final},
+	source = {Scopus},
+	note = {Cited by: 4970}
+}
+
+@article{shu1988efficient,
+  title={Efficient implementation of essentially non-oscillatory shock-capturing schemes},
+  author={Shu, Chi-Wang and Osher, Stanley},
+  journal={Journal of Computational Physics},
+  volume={77},
+  number={2},
+  pages={439--471},
+  year={1988},
+  publisher={Elsevier}
+}
+
+@article{SSPRKfamily,
+author = {Gottlieb, Sigal and Shu, Chi-Wang and Tadmor, Eitan},
+title = {Strong Stability-Preserving High-Order Time Discretization Methods},
+journal = {SIAM Review},
+volume = {43},
+number = {1},
+pages = {89-112},
+year = {2001},
+doi = {10.1137/S003614450036757X},
+
+URL = { 
+    
+        https://doi.org/10.1137/S003614450036757X
+    
+    
+
+},
+eprint = { 
+    
+        https://doi.org/10.1137/S003614450036757X
+    
+    
+
+}
+,
+    abstract = { In this paper we review and further develop a class of strong stability-preserving (SSP) high-order time discretizations for semidiscrete method of lines approximations of partial differential equations. Previously termed TVD (total variation diminishing) time discretizations, these high-order time discretization methods preserve the strong stability properties of first-order Euler time stepping and have proved very useful, especially in solving hyperbolic partial differential equations. The new developments in this paper include the construction of optimal explicit SSP linear Runge--Kutta methods, their application to the strong stability of coercive approximations, a systematic study of explicit SSP multistep methods for nonlinear problems, and the study of the SSP property of implicit Runge--Kutta and multistep methods. }
+}
+
+@article{MORINISHI199890,
+title = {Fully Conservative Higher Order Finite Difference Schemes for Incompressible Flow},
+journal = {Journal of Computational Physics},
+volume = {143},
+number = {1},
+pages = {90-124},
+year = {1998},
+issn = {0021-9991},
+doi = {https://doi.org/10.1006/jcph.1998.5962},
+url = {https://www.sciencedirect.com/science/article/pii/S0021999198959629},
+author = {Y. Morinishi and T.S. Lund and O.V. Vasilyev and P. Moin},
+abstract = {Conservation properties of the mass, momentum, and kinetic energy equations for incompressible flow are specified as analytical requirements for a proper set of discrete equations. Existing finite difference schemes in regular and staggered grid systems are checked for violations of the conservation requirements and a few important discrepancies are pointed out. In particular, it is found that none of the existing higher order schemes for a staggered mesh system simultaneously conserve mass, momentum, and kinetic energy. This deficiency is corrected through the derivation of a general family of fully conservative higher order accurate finite difference schemes for staggered grid systems. Finite difference schemes in a collocated grid system are also analyzed, and a violation of kinetic energy conservation is revealed. The predicted conservation properties are demonstrated numerically in simulations of inviscid white noise, performed in a two-dimensional periodic domain. The proposed fourth order schemes in a staggered grid system are generalized for the case of a non-uniform mesh, and the resulting scheme is used to perform large eddy simulations of turbulent channel flow.}
+}
+
+@article{LISKA201476,
+title = {A parallel fast multipole method for elliptic difference equations},
+journal = {Journal of Computational Physics},
+volume = {278},
+pages = {76-91},
+year = {2014},
+issn = {0021-9991},
+doi = {https://doi.org/10.1016/j.jcp.2014.07.048},
+author = {Sebastian Liska and Tim Colonius},
+keywords = {Fast multipole method, Fast convolution, Difference equation, Green's function, Infinite domain, Parallel computing, Discrete operator, Elliptic solver},
+abstract = {A new fast multipole formulation for solving elliptic difference equations on unbounded domains and its parallel implementation are presented. These difference equations can arise directly in the description of physical systems, e.g. crystal structures, or indirectly through the discretization of PDEs. In the analog to solving continuous inhomogeneous differential equations using Green's functions, the proposed method uses the fundamental solution of the discrete operator on an infinite grid, or lattice Green's function. Fast solutions O(N) are achieved by using a kernel-independent interpolation-based fast multipole method. Unlike other fast multipole algorithms, our approach exploits the regularity of the underlying Cartesian grid and the efficiency of FFTs to reduce the computation time. Our parallel implementation allows communications and computations to be overlapped and requires minimal global synchronization. The accuracy, efficiency, and parallel performance of the method are demonstrated through numerical experiments on the discrete 3D Poisson equation.}
+}
+
+@article{AITHAL2020109693,
+title = {A fast pressure-correction method for incompressible flows over curved walls},
+journal = {Journal of Computational Physics},
+volume = {421},
+pages = {109693},
+year = {2020},
+issn = {0021-9991},
+doi = {https://doi.org/10.1016/j.jcp.2020.109693},
+url = {https://www.sciencedirect.com/science/article/pii/S0021999120304678},
+author = {Abhiram B. Aithal and Antonino Ferrante},
+keywords = {Incompressible Navier-Stokes equations, Orthogonal coordinates, Pressure-correction method, Explicit Runge-Kutta, Fast Poisson solver, Wall-bounded flows},
+abstract = {We have developed an explicit and direct pressure-correction method for simulating incompressible flows over curved walls. In order to integrate the Navier Stokes (NS) equations in time, we have developed an explicit, three-stage, third-order Runge-Kutta based projection-method (FastRK3) which requires solving the Poisson equation for pressure only once per time step. We have chosen to discretize the incompressible NS equations written in the orthogonal coordinates rather than the general formulation in curvilinear coordinates because the former does not contain cross-derivatives in the advection, diffusion, Laplacian, and gradient operators. Thus, the computational cost of solving the NS equations is substantially reduced and the numerical stencils of the finite difference approximations to these operators mirror that of the Cartesian formulation. This property also allows us to develop an FFT-based Poisson solver for pressure (FastPoc) for those cases where the components of the metric tensor are independent of one spatial direction: surfaces of linear translation (e.g., curved ramps and bumps) and surfaces of revolution (e.g., axisymmetric ramps). We have verified and validated FastRK3 and we have applied FastRK3 for simulating separated flows over ramps and a bump. Finally, our results show that the new FFT-based Poisson solver, FastPoc, is thirty to sixty times faster than the multigrid-based linear solver (depending on the tolerance set for the multigrid solver), and the new flow solver, FastRK3, is overall four to seven times faster when using FastPoc rather than multigrid. In summary, given that the computational mesh satisfies the property of orthogonality, FastRK3 can simulate flows over curved walls with second-order accuracy in space.}
+}
+
+@article{hou2024lattice,   
+     title={Fast and robust method for screened {P}oisson lattice {G}reen's function using asymptotic expansion and {F}ast {F}ourier {T}ransform},   
+     author={Hou, Wei and Colonius, Tim},   
+     journal={arXiv preprint arXiv:2403.03076},   
+     year={2024}   
+ }   
