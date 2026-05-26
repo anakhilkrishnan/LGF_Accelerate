@@ -178,3 +178,111 @@ Final Memory Profile Report Across Processes:
  * Node total           free                 free+buffers+cached  shared            
    [   15 ... 15    GB] [ 1738 ... 1738  MB] [ 7633 ... 7633  MB] [  795 ... 795   MB]
 
+Final Memory Profile Report Across Processes:
+      | Name            |       Current      |   High Water Mark  |
+      |-----------------+--------------------+--------------------|
+      | MemPool         |  8192 ... 8192  KB |  8192 ... 8192  KB |
+      | Fab             |     0 ... 0      B |  3088 ... 3088  KB |
+      |-----------------+--------------------+--------------------|
+      | Total           |  8192 ... 8192  KB |                    |
+
+      | Name            |      Current #     |  High Water Mark # |
+      |-----------------+--------------------+--------------------|
+      | MultiFab        |      0 ... 0       |      4 ... 4       |
+
+ * Proc VmPeak          VmSize               VmHWM                VmRSS             
+   [  282 ... 282   MB] [  282 ... 282   MB] [  100 ... 100   MB] [  100 ... 100   MB]
+
+ * Node total           free                 free+buffers+cached  shared            
+   [   31 ... 31    GB] [ 3435 ... 3435  MB] [   25 ... 25    GB] [  960 ... 960   MB]
+
+Final Memory Profile Report Across Processes:
+      | Name            |       Current      |   High Water Mark  |
+      |-----------------+--------------------+--------------------|
+      | MemPool         |  8192 ... 8192  KB |  8192 ... 8192  KB |
+      | Fab             |     0 ... 0      B |  3088 ... 3088  KB |
+      |-----------------+--------------------+--------------------|
+      | Total           |  8192 ... 8192  KB |                    |
+
+      | Name            |      Current #     |  High Water Mark # |
+      |-----------------+--------------------+--------------------|
+      | MultiFab        |      0 ... 0       |      4 ... 4       |
+
+ * Proc VmPeak          VmSize               VmHWM                VmRSS             
+   [  282 ... 282   MB] [  282 ... 282   MB] [  100 ... 100   MB] [  100 ... 100   MB]
+
+ * Node total           free                 free+buffers+cached  shared            
+   [   31 ... 31    GB] [ 3414 ... 3414  MB] [   25 ... 25    GB] [  981 ... 981   MB]
+
+Final Memory Profile Report Across Processes:
+      | Name            |       Current      |   High Water Mark  |
+      |-----------------+--------------------+--------------------|
+      | MemPool         |  8192 ... 8192  KB |  8192 ... 8192  KB |
+      | Fab             |     0 ... 0      B |  3088 ... 3088  KB |
+      |-----------------+--------------------+--------------------|
+      | Total           |  8192 ... 8192  KB |                    |
+
+      | Name            |      Current #     |  High Water Mark # |
+      |-----------------+--------------------+--------------------|
+      | MultiFab        |      0 ... 0       |      4 ... 4       |
+
+ * Proc VmPeak          VmSize               VmHWM                VmRSS             
+   [  282 ... 282   MB] [  282 ... 282   MB] [  100 ... 100   MB] [  100 ... 100   MB]
+
+ * Node total           free                 free+buffers+cached  shared            
+   [   31 ... 31    GB] [ 3425 ... 3425  MB] [   25 ... 25    GB] [  977 ... 977   MB]
+
+Final Memory Profile Report Across Processes:
+      | Name            |       Current      |   High Water Mark  |
+      |-----------------+--------------------+--------------------|
+      | Fab             |     0 ... 0      B |    12 ... 12    MB |
+      | MemPool         |  8192 ... 8192  KB |  8192 ... 8192  KB |
+      |-----------------+--------------------+--------------------|
+      | Total           |  8192 ... 8192  KB |                    |
+
+      | Name            |      Current #     |  High Water Mark # |
+      |-----------------+--------------------+--------------------|
+      | MultiFab        |      0 ... 0       |      4 ... 4       |
+
+ * Proc VmPeak          VmSize               VmHWM                VmRSS             
+   [  486 ... 486   MB] [  466 ... 466   MB] [  304 ... 304   MB] [  284 ... 284   MB]
+
+ * Node total           free                 free+buffers+cached  shared            
+   [   31 ... 31    GB] [ 3257 ... 3257  MB] [   24 ... 24    GB] [  977 ... 977   MB]
+
+Final Memory Profile Report Across Processes:
+      | Name            |       Current      |   High Water Mark  |
+      |-----------------+--------------------+--------------------|
+      | Fab             |     0 ... 0      B |    48 ... 48    MB |
+      | MemPool         |  8192 ... 8192  KB |  8192 ... 8192  KB |
+      |-----------------+--------------------+--------------------|
+      | Total           |  8192 ... 8192  KB |                    |
+
+      | Name            |      Current #     |  High Water Mark # |
+      |-----------------+--------------------+--------------------|
+      | MultiFab        |      0 ... 0       |      4 ... 4       |
+
+ * Proc VmPeak          VmSize               VmHWM                VmRSS             
+   [ 1323 ... 1323  MB] [ 1206 ... 1206  MB] [ 1141 ... 1141  MB] [ 1025 ... 1025  MB]
+
+ * Node total           free                 free+buffers+cached  shared            
+   [   31 ... 31    GB] [ 2321 ... 2321  MB] [   24 ... 24    GB] [  983 ... 983   MB]
+
+Final Memory Profile Report Across Processes:
+      | Name            |       Current      |   High Water Mark  |
+      |-----------------+--------------------+--------------------|
+      | Fab             |     0 ... 0      B |   192 ... 192   MB |
+      | MemPool         |  8192 ... 8192  KB |  8192 ... 8192  KB |
+      |-----------------+--------------------+--------------------|
+      | Total           |  8192 ... 8192  KB |                    |
+
+      | Name            |      Current #     |  High Water Mark # |
+      |-----------------+--------------------+--------------------|
+      | MultiFab        |      0 ... 0       |      4 ... 4       |
+
+ * Proc VmPeak          VmSize               VmHWM                VmRSS             
+   [ 4754 ... 4754  MB] [ 4290 ... 4290  MB] [ 4572 ... 4572  MB] [ 4108 ... 4108  MB]
+
+ * Node total           free                 free+buffers+cached  shared            
+   [   31 ... 31    GB] [  864 ... 864   MB] [   21 ... 21    GB] [ 1055 ... 1055  MB]
+

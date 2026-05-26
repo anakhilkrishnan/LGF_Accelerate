@@ -11,4 +11,4 @@ domain_hi = 5.0 5.0 5.0
 use_FMM = true
 
 write_plot = true
-plot_prefix = "./Results/pltfmmfixcpu"
+plot_prefix = "./Results/FMMfix/plt"

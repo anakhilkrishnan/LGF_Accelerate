@@ -8,15 +8,14 @@ import re
 # ==========================================
 # User Defined Inputs (Matching ParmParse)
 # ==========================================
-n_cell = 2048
+n_cell = 256
 dom_lo = -5.0
 dom_hi = 5.0
-dx = (dom_hi - dom_lo)/n_cell
 gauss_cen_x = 0.0
 gauss_cen_y = 0.25
 variance = 0.5  # From SourceField.H
-descr = "fmmfixcpu"
-plotfile = "plt" + descr + "0" + str(n_cell)
+descr = "taggpu"
+plotfile = "plt" + descr + "00" + str(n_cell)
 adaptiveGrid = True
 
 # ==========================================
@@ -70,21 +69,15 @@ phi_num = phi_num_raw - shift_val
 
 print(f"Applied constant shift of {shift_val:.4e} to match analytical center.")
 
-# flatten difference vector
-diff_vec = (phi_num - phi_exact).flatten()
-
-# compute various errors
+# Compute Absolute Error
 abs_error = np.abs(phi_num - phi_exact)
-max_error = np.max(np.abs(diff_vec))
-# in a structured grid with no AMR, dx and dy are identical throughout, hence
-# RMS calculation is:
-rms_error = np.sqrt(np.mean(diff_vec**2))
-# if AMR was enabled, or dx and dy were non-uniform, then RMS must be computed 
-# by considering cell-wise weighted averages
+max_error = np.max(abs_error)
 
+# Compute Relative L2 Norm (The "Shape Check")
+l2_norm_rel = np.linalg.norm(phi_num - phi_exact) / np.linalg.norm(phi_exact)
 
 print(f"Maximum Absolute Error: {max_error:.4e}")
-print(f"Root Mean Squared Error: {rms_error:.4e}")
+print(f"Relative L2 Error Norm: {l2_norm_rel:.4e}")
 
 # ==========================================
 # 5. Plotting Results (2D)
@@ -106,7 +99,7 @@ if adaptiveGrid:
     axs[2].contour(tag_mask.T, levels=[0.5], extent=extent, colors='cyan', 
                linewidths=1.5, linestyles='dashed')
 
-axs[2].set_title(f"Absolute Error\n(Max: {max_error:.4e} | RMSE: {rms_error:.4e})")
+axs[2].set_title(f"Absolute Error\n(Max: {max_error:.2e} | L2: {l2_norm_rel:.2e})")
 fig.colorbar(im2, ax=axs[2])
 
 plt.tight_layout()

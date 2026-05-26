@@ -1,14 +1,14 @@
-n_cell = 256
-max_grid_size = 16
+n_cell = 512
+max_grid_size = 512
 
-tagging_threshold = 1.0e-8
+tagging_threshold = 0.0
 
 amrex.max_gpu_streams = 4
 
 domain_lo = -5.0 -5.0 -5.0
 domain_hi = 5.0 5.0 5.0
 
-use_FMM = false
+use_FMM = true
 
-write_plot = false
-plot_prefix = "./Results/plttaggpu"
+write_plot = true
+plot_prefix = "./Results/FMMfix/plt"
