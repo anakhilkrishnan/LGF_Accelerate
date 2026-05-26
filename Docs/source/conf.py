@@ -107,10 +107,14 @@ latex_elements = {
         \usepackage{microtype}
         \usepackage{amsmath}
         \usepackage{bm}
-        \usepackage{physics}
         \usepackage{amssymb}
-        \usepackage{derivative}
         \usepackage{float}
+
+        % Define specific macros to replace physics/derivative packages
+        \newcommand{\odif}[1]{\mathrm{d}#1}
+        \newcommand{\abs}[1]{\left|#1\right|}
+        \newcommand{\norm}[1]{\left\|#1\right\|}
+        \newcommand{\pdif}[2]{\frac{\partial #1}{\partial #2}}
     """,
 
     # Put the table of contents on its own page

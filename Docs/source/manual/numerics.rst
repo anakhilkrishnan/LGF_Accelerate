@@ -132,6 +132,10 @@ BBFMM2D performs the following steps:
 #. Performs a downward pass of the tree, extracting solutions at target
    locations.
 
+In the present implementation, BBFMM2D's in-built :math:`\log{\vec{r}}` kernel
+is used for the far-field computations, the near-field results are taken from
+the lookup table.
+
 BBFMM2D has the following limitations:
 
 * The code is fully **serial**, it can only use a single CPU core.
