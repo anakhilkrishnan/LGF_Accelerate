@@ -77,7 +77,9 @@ operator is inverted using Fourier integrals, yielding the form
 
 .. math::
 
-    G_L(\vec{n}) = \frac{1}{(2\pi)^2} \int\int_{[-\pi, \pi]^2} \frac{1 - \cos{(\vec{\xi} \cdot \vec{n})}}{4 - 2\cos{(\xi_1)}- 2\cos{(\xi_2)}} \odif{\xi_1}\odif{\xi_2}
+    G_L(\vec{n}) = \frac{1}{(2\pi)^2} \int\int_{[-\pi, \pi]^2} \frac{1 -
+    \cos{(\vec{\xi} \cdot \vec{n})}}{4 - 2\cos{(\xi_1)}- 2\cos{(\xi_2)}}
+    \odif{\xi_1}\odif{\xi_2}
 
 Where :math:`\vec{\xi} = (\xi_1, \xi_2)` are Fourier modes.
 

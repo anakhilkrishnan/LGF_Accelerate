@@ -1,0 +1,50 @@
+Initializing AMReX (26.05-39-gbe2cc437644f)...
+MPI initialized with 1 MPI processes
+MPI initialized with thread support level 0
+OMP initialized with 4 OMP threads
+AMReX (26.05-39-gbe2cc437644f) initialized
+This is finally the start of my AMReX code.
+Time taken for computation: 567.4448282
+Writing plotfile to: ./Results/plt_by512_4thread_tag_cpu00512
+Plotfile written to: ./Results/plt_by512_4thread_tag_cpu00512
+Max compute time (Slowest Rank): 567.4547849 s
+Min compute time (Fastest Rank): 567.4547849 s
+Time spread (Load Imbalance)   : 0 s
+
+
+TinyProfiler total time across processes [min...avg...max]: 567.5 ... 567.5 ... 567.5
+
+-------------------------------------------------------------------------------------------
+Name                                        NCalls  Excl. Min  Excl. Avg  Excl. Max   Max %
+-------------------------------------------------------------------------------------------
+<Compute> addEverySourceBox()                    1      567.4      567.4      567.4 100.00%
+Other                                           16     0.0117     0.0117     0.0117   0.00%
+-------------------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------------------
+Name                                        NCalls  Incl. Min  Incl. Avg  Incl. Max   Max %
+-------------------------------------------------------------------------------------------
+<Compute> addEverySourceBox()                    1      567.4      567.4      567.4 100.00%
+Other                                           16    0.02186    0.02186    0.02186   0.00%
+-------------------------------------------------------------------------------------------
+
+Unused ParmParse Variables:
+  [TOP]::amrex.max_gpu_streams(nvals = 1)  :: [4]
+
+Pinned Memory Usage:
+-------------------------------------------------------------
+Name                                 Nalloc  AvgMem    MaxMem
+-------------------------------------------------------------
+The_Pinned_Arena::Initialize()            1   0   B  8192 KiB
+<Communicate> consolidateMultiFab()       1   7   B  2064 KiB
+-------------------------------------------------------------
+
+Cpu Memory Usage:
+-------------------------------------------------
+Name                   Nalloc    AvgMem    MaxMem
+-------------------------------------------------
+Unprofiled                  3  4128 KiB  6176 KiB
+<I/O> writingPlotfile       1    72   B  6144 KiB
+-------------------------------------------------
+
+AMReX (26.05-39-gbe2cc437644f) finalized
