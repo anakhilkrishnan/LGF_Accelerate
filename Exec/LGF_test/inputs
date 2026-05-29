@@ -1,5 +1,5 @@
-n_cell = 2048
-max_grid_size = 2048
+n_cell = 512
+max_grid_size = 512
 
 tagging_threshold = 0.0
 

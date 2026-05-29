@@ -21,28 +21,23 @@ set(AMReX_OMP OFF CACHE BOOL "Enable OpenMP")
 set(AMReX_TINY_PROFILE YES CACHE BOOL "Enable Tiny Profiling")
 set(AMReX_MEM_PROFILE YES CACHE BOOL "Enable Memory Profiling")
 
-if(NOT DEFINED AMReX_ROOT)
-  message("-- Download and configure AMReX from GitHub")
-
-  # Download AMReX from GitHub
-  include(FetchContent)
-  set(FETCHCONTENT_QUIET OFF)
-
-  FetchContent_Declare(
-    amrex_code
-    GIT_REPOSITORY https://github.com/AMReX-Codes/amrex.git/
-    GIT_TAG        origin/development
+if(NOT TARGET AMReX::amrex)
+  message(STATUS "LGF_Accelerate: AMReX not found in parent. Fetching local copy...")
+  
+  if(NOT DEFINED AMReX_ROOT)
+    include(FetchContent)
+    set(FETCHCONTENT_QUIET OFF)
+    FetchContent_Declare(
+        amrex_code
+        GIT_REPOSITORY https://github.com/AMReX-Codes/amrex.git/
+        GIT_TAG        origin/development
     )
-
-  FetchContent_MakeAvailable(amrex_code)
-
-
+    FetchContent_MakeAvailable(amrex_code)
+  else()
+    find_package(AMReX REQUIRED PATHS ${AMReX_ROOT}/lib/cmake/AMReX/AMReXConfig.cmake)
+  endif()
 else()
-
-  # Add AMReX
-  message("-- Searching for AMReX install directory at ${AMReX_ROOT}")
-  find_package(AMReX REQUIRED PATHS ${AMReX_ROOT}/lib/cmake/AMReX/AMReXConfig.cmake)
-
+  message(STATUS "LGF_Accelerate: Using AMReX provided by parent project.")
 endif()
 
 # find Eigen3 installation on the system
