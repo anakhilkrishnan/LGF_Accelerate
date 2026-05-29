@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-# project(LGF_Project LANGUAGES C CXX CUDA)
+# project(LGF_Accelerate LANGUAGES C CXX CUDA)
 
 # # set of default values for a typical gpu run
 # set(CMAKE_BUILD_TYPE "Release" CACHE STRING "cmake build type")
@@ -11,7 +11,7 @@ cmake_minimum_required(VERSION 3.16)
 # set(AMReX_TINY_PROFILE YES CACHE BOOL "Enable Tiny Profiling")
 # set(AMReX_MEM_PROFILE YES CACHE BOOL "Enable Memory Profiling")
 
-project(LGF_Project LANGUAGES C CXX)
+project(LGF_Accelerate LANGUAGES C CXX)
 
 # set of default values for typical cpu run
 set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "cmake build type")
@@ -48,11 +48,23 @@ endif()
 # find Eigen3 installation on the system
 find_package(Eigen3 REQUIRED)
 
-# adding additional repositories
+# building as static library
 add_subdirectory(Src/LGF_core)
-add_subdirectory(Src/LGF_test)
 
-# make Exec directories in case they're not present
-file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/Exec/LGF_test/Results")
-file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/Exec/LGF_test/Logs")
-file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/Exec/LGF_bench")
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+
+  # building executable for testing and development
+  message(STATUS "Building LGF_Accelerate for testing...")
+  add_subdirectory(Src/LGF_test)
+
+  # make Exec directories in case they're not present
+  file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/Exec/LGF_test/Results")
+  file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/Exec/LGF_test/Logs")
+  file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/Exec/LGF_bench")
+  
+else()
+
+  # no additional building, only static library for use as a submodule
+  message(STATUS "Building LGF_Accelerate as a submodule library...")
+endif()
+
