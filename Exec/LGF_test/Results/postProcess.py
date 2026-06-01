@@ -76,10 +76,10 @@ abs_error = np.abs(phi_num - phi_exact)
 max_error = np.max(abs_error)
 
 # Compute Relative L2 Norm (The "Shape Check")
-l2_norm_rel = np.linalg.norm(phi_num - phi_exact) / np.linalg.norm(phi_exact)
+rmse_error = np.sqrt(np.mean(np.square(phi_num - phi_exact)))
 
 print(f"Maximum Absolute Error: {max_error:.4e}")
-print(f"Relative L2 Error Norm: {l2_norm_rel:.4e}")
+print(f"RMS Error: {rmse_error:.4e}")
 
 # ==========================================
 # 5. Plotting Results (2D)
@@ -101,7 +101,7 @@ if adaptiveGrid:
     axs[2].contour(tag_mask.T, levels=[0.5], extent=extent, colors='cyan', 
                linewidths=1.5, linestyles='dashed')
 
-axs[2].set_title(f"Absolute Error\n(Max: {max_error:.2e} | L2: {l2_norm_rel:.2e})")
+axs[2].set_title(f"Absolute Error\n(Max: {max_error:.2e} | RMS: {rmse_error:.2e})")
 fig.colorbar(im2, ax=axs[2])
 
 plt.tight_layout()
