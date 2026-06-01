@@ -17,17 +17,43 @@ void solveFMM(const amrex::MultiFab& source, amrex::MultiFab& target, const amre
     // PENDING: box tagging has not been worked out for this yet
 
     const amrex::Box& domain = geom.Domain();
+
     int nx = domain.length(0);
     int ny = domain.length(1);
-    unsigned long N_total = nx * ny;
+
+    // computing values to include ghost cells in FMM computations
+    int n_ghost = target.nGrow();
+    int nx_ghost = nx + (2 * n_ghost);
+    int ny_ghost = ny + (2 * n_ghost);
+
+    unsigned long N_total = nx_ghost * ny_ghost;
 
     std::vector<Point> all_locations(N_total);
     std::vector<double> local_charges(N_total, 0.0);
 
     amrex::GpuArray<amrex::Real, AMREX_SPACEDIM> dx = geom.CellSizeArray();
     amrex::GpuArray<amrex::Real, AMREX_SPACEDIM> prob_lo = geom.ProbLoArray();
-    amrex::Real dvol = dx[0] * dx[1]; 
+    amrex::Real dvol = dx[0] * dx[1];
 
+    amrex::GpuArray<amrex::Real, AMREX_SPACEDIM> prob_lo_ghost;
+    prob_lo_ghost[0] = prob_lo[0] - (n_ghost * dx[0]);
+    prob_lo_ghost[1] = prob_lo[1] - (n_ghost * dx[1]);
+
+    // fill all_locations, including ghost cells
+    for (int j = 0; j < ny_ghost; ++j)
+    {
+        amrex::Real y_src = prob_lo_ghost[1] + (j + 0.5) * dx[1];
+
+        for (int i = 0; i < nx_ghost; ++i)
+        {
+            amrex::Real x_src = prob_lo_ghost[0] + (i + 0.5) * dx[0];
+
+            int flat_idx = j * nx_ghost + i;
+            all_locations[flat_idx] = {x_src, y_src};
+        }
+    }
+
+    // fill local_charges, only in validbox()
     for (amrex::MFIter mfi(source); mfi.isValid(); ++mfi) 
     {
         const amrex::Box& valid_box = mfi.validbox();
@@ -35,13 +61,13 @@ void solveFMM(const amrex::MultiFab& source, amrex::MultiFab& target, const amre
 
         for (int j = valid_box.smallEnd()[1]; j <= valid_box.bigEnd()[1]; ++j) 
         {
-            amrex::Real y_src = prob_lo[1] + (j + 0.5) * dx[1];
             for (int i = valid_box.smallEnd()[0]; i <= valid_box.bigEnd()[0]; ++i) 
             {
-                amrex::Real x_src = prob_lo[0] + (i + 0.5) * dx[0];
+                // Shift AMReX index to match the expanded flat array index
+                int shifted_i = i + n_ghost;
+                int shifted_j = j + n_ghost;
+                int flat_idx = shifted_j * nx_ghost + shifted_i;
 
-                int flat_idx = j * nx + i;
-                all_locations[flat_idx] = {x_src, y_src}; // Every rank generates the identical coordinate map
                 local_charges[flat_idx] = phi_arr(i, j, 0) * dvol; 
             }
         }
@@ -85,23 +111,27 @@ void solveFMM(const amrex::MultiFab& source, amrex::MultiFab& target, const amre
 
     // offset values needed for reconstructing 
     double total_charge = 0.0;
-    for (double q : global_charges) {
+    for (double q : global_charges) 
+    {
         total_charge += q;
     }
     
     double C = 0.2573420803;
     double C_prime = C - (1.0 / (4.0 * M_PI)) * std::log(dx[0] * dx[0]); 
 
-    for (amrex::MFIter mfi(target); mfi.isValid(); ++mfi) 
+    for (amrex::MFIter mfi(target, amrex::TilingIfNotGPU()); mfi.isValid(); ++mfi) 
     {
-        const amrex::Box& valid_box = mfi.validbox();
+        const amrex::Box& grown_box = mfi.growntilebox(n_ghost);
         auto const& tar_arr = target.array(mfi);
 
-        for (int j = valid_box.smallEnd()[1]; j <= valid_box.bigEnd()[1]; ++j) 
+        for (int j = grown_box.smallEnd()[1]; j <= grown_box.bigEnd()[1]; ++j) 
         {
-            for (int i = valid_box.smallEnd()[0]; i <= valid_box.bigEnd()[0]; ++i) 
+            for (int i = grown_box.smallEnd()[0]; i <= grown_box.bigEnd()[0]; ++i) 
             {
-                int flat_idx = j * nx + i;
+                // Shift AMReX index to match the expanded flat index
+                int shifted_i = i + n_ghost;
+                int shifted_j = j + n_ghost;
+                int flat_idx = shifted_j * nx_ghost + shifted_i;
 
                 // update corrected target values
                 double pure_log_potential = calculated_potentials[flat_idx];

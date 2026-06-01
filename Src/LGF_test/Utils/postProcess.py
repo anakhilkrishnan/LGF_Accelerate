@@ -14,8 +14,10 @@ dom_hi = 5.0
 gauss_cen_x = 0.0
 gauss_cen_y = 0.25
 variance = 0.5  # From SourceField.H
+
+dir = "contKernelTest"
 descr = "taggpu"
-plotfile = "plt" + descr + "00" + str(n_cell)
+plotfile = dir + "/plt" + descr + "00" + str(n_cell)
 adaptiveGrid = True
 
 # ==========================================
@@ -25,7 +27,7 @@ basename = os.path.basename(plotfile.rstrip('/'))
 match = re.search(r'\d+', basename)
 num_str = match.group(0) if match else "XXXXX"
 
-out_dir = "post" + descr + f"{num_str}"
+out_dir = dir + "/post" + descr + f"{num_str}"
 os.makedirs(out_dir, exist_ok=True)
 print(f"Output directory established: {os.path.abspath(out_dir)}")
 
