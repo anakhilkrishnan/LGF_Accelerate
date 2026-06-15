@@ -50,7 +50,19 @@ public:
         // --- C. The Far-Field (Continuous) ---
         // If the cells are far apart, hand control back to BBFMM2D's native log function.
         // This is what it will use to build the Chebyshev matrices.
-        return kernel_Logarithm::kernel_Func(r0, r1);
+        // return kernel_Logarithm::kernel_Func(r0, r1);
+        else
+        {
+            double x2 = (r0.x-r1.x)*(r0.x-r1.x);
+            double y2 = (r0.y-r1.y)*(r0.y-r1.y);
+            double r2 = x2 + y2;
+            double h2 = cell_dx * cell_dx;
+
+            double G_cont = 0.5 * log(r2);
+            double multipole = (h2 * (x2*x2 + y2*y2 - 6.0*x2*y2)) / (12.0 * r2 * r2 * r2);
+
+            return G_cont - multipole;
+        }
     }
 
     // NOTICE: We completely omit kernel_Scale().

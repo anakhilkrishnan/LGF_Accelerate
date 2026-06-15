@@ -17,7 +17,7 @@ def eval_lgf_GK_finite_c0(n,m, alpha, eps = 1e-10):
     res2 = scipy.integrate.quad(lambda x: integrand_finite_c0(lbd, n,m,alpha,x), 0, np.pi, epsrel=-1, epsabs=eps, limit = 100000)
     return (res1[0]+res2[0])/2/np.pi
 
-size = 3
+size = 15
 print(f"static constexpr amrex::Real exact_core[{size}][{size}] = {{")
 for n in range(size):
     row = []
