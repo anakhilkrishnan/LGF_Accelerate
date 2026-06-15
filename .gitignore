@@ -11,7 +11,7 @@ Build*/
 out/
 
 # Exec folder. Track independently for each machine
-Exec/**
+/Exec/*
 
 # Ignore the documentation files, except the ones needed to rebuild docs
 Docs/**
