@@ -109,16 +109,6 @@ void solveFMM(const amrex::MultiFab& source, amrex::MultiFab& target, const amre
     // unpacking step: take the long vector of computed potentials and reconstruct
     // the target MultiFab 
 
-    // offset values needed for reconstructing 
-    double total_charge = 0.0;
-    for (double q : global_charges) 
-    {
-        total_charge += q;
-    }
-    
-    double C = 0.2573420803;
-    double C_prime = C - (1.0 / (4.0 * M_PI)) * std::log(dx[0] * dx[0]); 
-
     for (amrex::MFIter mfi(target, amrex::TilingIfNotGPU()); mfi.isValid(); ++mfi) 
     {
         const amrex::Box& grown_box = mfi.growntilebox(n_ghost);
@@ -134,8 +124,7 @@ void solveFMM(const amrex::MultiFab& source, amrex::MultiFab& target, const amre
                 int flat_idx = shifted_j * nx_ghost + shifted_i;
 
                 // update corrected target values
-                double pure_log_potential = calculated_potentials[flat_idx];
-                tar_arr(i, j, 0) = (1.0 / (2.0 * M_PI)) * pure_log_potential + (C_prime * total_charge);
+                tar_arr(i, j, 0) = calculated_potentials[flat_idx];
             }
         }
     }

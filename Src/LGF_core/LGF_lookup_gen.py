@@ -10,7 +10,7 @@ def integrand_finite_c0(lbd, n,m,alpha,theta):
     res = ( np.cos(theta*n) *((1/K)**m ) - 1) / (K - 1/K)
     return res
 
-def eval_lgf_GK_finite_c0(n,m, alpha, eps = 1e-10):
+def eval_lgf_GK_finite_c0(n,m, alpha, eps = 1e-12):
     # Evaluating the LGF using Gauss-Kronrod quadrature but with the 1D finite integral
     lbd = 2 + 2*alpha
     res1 = scipy.integrate.quad(lambda x: integrand_finite_c0(lbd, n,m,alpha,x), -np.pi, 0, epsrel=-1, epsabs=eps, limit = 100000)
