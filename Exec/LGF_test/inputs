@@ -9,6 +9,10 @@ domain_lo = -5.0 -5.0 -5.0
 domain_hi = 5.0 5.0 5.0
 
 use_FMM = true
+n_chebyshev = 20
+n_lookup = 32
+
+compare_MLMG = false
 
 write_plot = true
-plot_prefix = "./Results/20Node15Lookup/plt"
+plot_prefix = "./Results/20Node32Look/plt"

@@ -13,16 +13,11 @@ int main(int argc, char* argv[])
 {
     amrex::Initialize(argc,argv);
 
-    test_print();
+    amrex::Print() << "Launching test run for LGF Core...";
     extendedMain();
 
     amrex::Finalize();
     return 0;
-}
-
-void test_print()
-{
-    amrex::Print() << "This is finally the start of my AMReX code." << "\n";
 }
 
 void extendedMain()
@@ -31,11 +26,12 @@ void extendedMain()
     auto start_time = amrex::second();
 
     // variables to be read from ParmParse
-    int n_cell, max_grid_size;
+    int n_cell, max_grid_size, n_chebyshev, n_lookup;
     amrex::Real source_tag_thresh;
     amrex::Array<amrex::Real,AMREX_SPACEDIM> phy_dom_lo, phy_dom_hi;
     bool write_plot = false;
     bool use_FMM = false;
+    bool compare_MLMG = false;
 
     // setting a default plotfile prefix in case not specified in inputs
     std::string plot_prefix = "./Results/plt";
@@ -47,10 +43,13 @@ void extendedMain()
     pp.get("domain_lo", phy_dom_lo);
     pp.get("domain_hi", phy_dom_hi);
     pp.get("tagging_threshold", source_tag_thresh);
+    pp.get("n_chebyshev", n_chebyshev);
+    pp.get("n_lookup", n_lookup);
 
     pp.query("use_FMM", use_FMM);
     pp.query("write_plot", write_plot);
     pp.query("plot_prefix", plot_prefix);
+    pp.query("compare_MLMG", compare_MLMG);
 
     // initializing parameters for MultiFabs
     int n_ghost = 1;
@@ -97,7 +96,7 @@ void extendedMain()
     if (use_FMM)
     {
         // using BBFMM2d to compute the result of the LGF problem
-        solveFMM(sourceMF, targetMF, geom);
+        solveFMM(sourceMF, targetMF, geom, n_chebyshev, n_lookup);
     }
     else
     {
@@ -113,6 +112,21 @@ void extendedMain()
     auto compute_time = compute_end_time - compute_start_time;
     amrex::Print() << "Time taken for computation: " << compute_time << "\n";
 
+    amrex::MultiFab residual = computeResidual(sourceMF, targetMF, geom);
+    amrex::Print() << "Max. Abs. Residual: " << residual.norminf() << "\n";
+
+    amrex::MultiFab targetMLMG(ba, dm, n_comp, n_ghost);
+    targetMLMG.setVal(0.0);
+    if (compare_MLMG)
+    {
+        auto mlmg_start_time = amrex::second();
+        syncBCs(targetMLMG, targetMF, geom, n_ghost);
+        solveMLMG(sourceMF, targetMLMG, geom);
+        auto mlmg_end_time = amrex::second();
+        auto mlmg_compute_time = mlmg_end_time - mlmg_start_time;
+        amrex::Print() << "Time taken for MLMG solve: " << mlmg_compute_time << "\n";
+    }
+    
     // building a MultiFab to visualize the cells that are being tagged
     amrex::MultiFab tagRegion(sourceMF.boxArray(), sourceMF.DistributionMap(), 1, 0);
 
@@ -127,16 +141,24 @@ void extendedMain()
         // adding profiling blocks for Tiny/Base profilers
         BL_PROFILE("<I/O> writingPlotfile");
 
-        // building a multiFab with 3 components for plotting
-        amrex::MultiFab plotFab(targetMF.boxArray(), targetMF.DistributionMap(), 3, 0);
-        amrex::MultiFab::Copy(plotFab, sourceMF, 0, 0, 1, 0); // Component 0
-        amrex::MultiFab::Copy(plotFab, targetMF, 0, 1, 1, 0); // Component 1
-        amrex::MultiFab::Copy(plotFab, tagRegion, 0, 2, 1, 0); // Component 2
+        // building a multiFab with 4 + MLMG components for plotting
+        int numPlotComp = compare_MLMG ? 5 : 4;
+        amrex::MultiFab plotFab(targetMF.boxArray(), targetMF.DistributionMap(), numPlotComp, 0);
+        amrex::MultiFab::Copy(plotFab, sourceMF, 0, 0, 1, 0);
+        amrex::MultiFab::Copy(plotFab, targetMF, 0, 1, 1, 0);
+        amrex::MultiFab::Copy(plotFab, tagRegion, 0, 2, 1, 0);
+        amrex::MultiFab::Copy(plotFab, residual, 0, 3, 1, 0);
 
         // exporting the names of the MultiFabs
-        amrex::Vector<std::string> varnames = {"Source_Phi", "Target_Phi", "Active_Box_Tag"};
+        amrex::Vector<std::string> varnames = {"Source_Phi", "Target_Phi", "Active_Box_Tag", "Residual"};
 
-        // writing a simple plotfile
+        if (compare_MLMG)
+        {
+            amrex::MultiFab::Copy(plotFab, targetMLMG, 0, (numPlotComp-1), 1, 0);
+            varnames.push_back("MLMG_Target_Phi");
+        }
+        
+        // writing a single leve plotfile
         const std::string& plotfile_name = amrex::Concatenate(plot_prefix, n_cell);
         amrex::Print() << "Writing plotfile to: " << plotfile_name << "\n";
         WriteSingleLevelPlotfile(plotfile_name, plotFab, varnames, geom, 0.0, 0);

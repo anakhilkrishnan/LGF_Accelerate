@@ -55,7 +55,6 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   # make Exec directories in case they're not present
   file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/Exec/LGF_test/Results")
   file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/Exec/LGF_test/Logs")
-  file(MAKE_DIRECTORY "${CMAKE_SOURCE_DIR}/Exec/LGF_bench")
   
 else()
 

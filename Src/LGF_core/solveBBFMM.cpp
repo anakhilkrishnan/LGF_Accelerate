@@ -5,7 +5,7 @@
 #include <BBFMM2D.hpp>
 #include <LGFKernel.hpp>
 
-void solveFMM(const amrex::MultiFab& source, amrex::MultiFab& target, const amrex::Geometry& geom) 
+void solveFMM(const amrex::MultiFab& source, amrex::MultiFab& target, const amrex::Geometry& geom, int n_chebyshev, int n_lookup) 
 {
     // Profiling block for AMReX's TinyProfiler
     BL_PROFILE("<Compute> solveFMM()");
@@ -92,7 +92,7 @@ void solveFMM(const amrex::MultiFab& source, amrex::MultiFab& target, const amre
 #endif
 
     // setup the BBFMM solver 
-    unsigned short nChebNodes = 10; 
+    unsigned short nChebNodes = n_chebyshev; 
     unsigned m = 1;                 
 
     // Instantiate the tree without any padded targets!
@@ -100,7 +100,7 @@ void solveFMM(const amrex::MultiFab& source, amrex::MultiFab& target, const amre
 
     // instantiate LGF Kernel that inherits pre-built Log kernel
     // explicitly casted into double in case AMReX is compiled as float
-    kernel_LGF myKernel((double)dx[0], (double)dx[1]); 
+    kernel_LGF myKernel((double)dx[0], (double)dx[1], n_lookup); 
 
     // Evaluate
     std::vector<double> calculated_potentials(N_total, 0.0);

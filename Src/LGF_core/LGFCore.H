@@ -33,7 +33,7 @@ ConsolidatedData consolidateMultiFab(const amrex::MultiFab& phifab, const amrex:
 void addEverySourceBox(const amrex::MultiFab& source, amrex::MultiFab& target, const amrex::Geometry& geom, amrex::Vector<int> box_tag_arr);
 amrex::Vector<int> tagSource(const amrex::MultiFab& phifab, const amrex::Real source_threshold = 1.0e-8);
 // defining function for BBFMM
-void solveFMM(const amrex::MultiFab& source, amrex::MultiFab& target, const amrex::Geometry& geom); 
+void solveFMM(const amrex::MultiFab& source, amrex::MultiFab& target, const amrex::Geometry& geom, int n_chebyshev, int n_lookup); 
 
 // function to compute discrete LGF kernel for 2D
 AMREX_GPU_DEVICE AMREX_FORCE_INLINE 
