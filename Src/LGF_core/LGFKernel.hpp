@@ -105,13 +105,14 @@ class kernel_LGF : public kernel_Base
 
                 double g2 =  -((25.0 * cos8) + (18.0 * cos4)) / (480.0 * M_PI * r4);
 
-                double r6 = r2 * r4;
-                double cos12 = (cos8 * cos4) - (sin8 * sin4);
-                double sin12 = (sin8 * cos4) + (cos8 * sin4);
+                // commented out to run with 3 terms, 16 nodes and 32 cell lookup
+                // double r6 = r2 * r4;
+                // double cos12 = (cos8 * cos4) - (sin8 * sin4);
+                // double sin12 = (sin8 * cos4) + (cos8 * sin4);
 
-                double g3 = -((490.0 * cos12) + (459.0 * cos8)) / (2016.0 * M_PI * r6);
+                // double g3 = -((490.0 * cos12) + (459.0 * cos8)) / (2016.0 * M_PI * r6);
 
-                return (g0 + g1);
+                return (g0 + g1 + g2);
             }
         }
 };
