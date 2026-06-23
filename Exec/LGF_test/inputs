@@ -1,18 +1,18 @@
+amrex.max_gpu_streams=16
+
 n_cell = 512
 max_grid_size = 512
 
 tagging_threshold = 0.0
 
-amrex.max_gpu_streams = 4
-
 domain_lo = -5.0 -5.0 -5.0
 domain_hi = 5.0 5.0 5.0
 
 use_FMM = true
-n_chebyshev = 20
-n_lookup = 32
+n_chebyshev = 10
+n_lookup = 15
 
 compare_MLMG = false
 
 write_plot = true
-plot_prefix = "./Results/20Node32Look/plt"
+plot_prefix = "./Results/10Node/plt"

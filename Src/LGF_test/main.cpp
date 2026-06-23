@@ -101,10 +101,11 @@ void extendedMain()
     else
     {
         // performing addition of box values
-        addEverySourceBox(sourceMF, targetMF, geom, box_tag_arr);
+        addEverySourceBox(sourceMF, targetMF, geom, box_tag_arr, n_lookup);
 
         // this line is not needed because the code doesn't use the MF again at all, and the plot doesn't use ghost cells
-        // targetMF.FillBoundary(geom.periodicity());
+        // UPDATE: this line is needed for residual computations
+        targetMF.FillBoundary(geom.periodicity());
     }
 
     // marking end time and elapsed time

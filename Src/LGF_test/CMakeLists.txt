@@ -6,7 +6,7 @@ add_executable(lgfpoisson
                 MyFunctions.H
                 SourceField.H)
 
-# setup_target_for_cuda_compilation(lgfpoisson)
+setup_target_for_cuda_compilation(lgfpoisson)
 
 find_package(OpenMP REQUIRED)
 target_link_libraries(lgfpoisson PRIVATE OpenMP::OpenMP_CXX)
