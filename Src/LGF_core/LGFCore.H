@@ -33,6 +33,9 @@ struct LGFCommBuffers
     amrex::Vector<FabMetaData> h_local_meta;
     amrex::Gpu::DeviceVector<amrex::Real> d_local_data;
     amrex::Gpu::DeviceVector<FabMetaData> d_local_meta;
+
+    amrex::Gpu::DeviceVector<int> d_data_displs;
+    amrex::Gpu::DeviceVector<int> d_meta_displs;
 };
 
 // defining key functions within LGFcore
