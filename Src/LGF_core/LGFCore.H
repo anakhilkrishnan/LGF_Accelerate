@@ -41,7 +41,7 @@ struct LGFCommBuffers
 // defining key functions within LGFcore
 void tagSource(amrex::Gpu::DeviceVector<int>& d_is_box_tagged, const amrex::MultiFab& phifab, const amrex::Real source_threshold);
 void consolidateMultiFab(ConsolidatedData& consolPhi, const amrex::MultiFab& phifab, const amrex::Geometry& geom, amrex::Gpu::DeviceVector<int>& box_tag_arr, LGFCommBuffers& buff);
-void addEverySourceBox(const amrex::MultiFab& source, amrex::MultiFab& target, const amrex::Geometry& geom, amrex::Gpu::DeviceVector<int>& box_tag_arr, int n_lookup);
+void addEverySourceBox(const amrex::MultiFab& source, amrex::MultiFab& target, const amrex::Geometry& geom, amrex::Gpu::DeviceVector<int>& box_tag_arr, int n_lookup, ConsolidatedData& consolSource, LGFCommBuffers& buff) ;
 
 
 // defining function for BBFMM

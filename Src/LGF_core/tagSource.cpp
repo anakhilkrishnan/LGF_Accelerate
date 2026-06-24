@@ -11,11 +11,22 @@ void tagSource(amrex::Gpu::DeviceVector<int>& d_is_box_tagged, const amrex::Mult
     // adding profiling blocks for Tiny/Base profilers
     BL_PROFILE("<Communicate> tagSource()");
 
-    // resetting all values in d_is_box_tagged to zero asynchronously
-    amrex::Gpu::fill_async(d_is_box_tagged.begin(), d_is_box_tagged.end(), 0);
+    const int num_local_boxes = phifab.local_size();
 
-    // obtaining raw pointers for GPU
+    // ensure capacity matches without forcing a reallocation if it's already sized
+    if (d_is_box_tagged.size() != num_local_boxes) 
+    {
+        d_is_box_tagged.resize(num_local_boxes);
+    }
+
+    // obtain raw pointers for GPU
     int* d_flags_ptr = d_is_box_tagged.dataPtr();
+    
+    // utilize the AMReX compute stream to zero the array natively on the GPU
+    amrex::ParallelFor(num_local_boxes, [=] AMREX_GPU_DEVICE (int i) 
+    {
+        d_flags_ptr[i] = 0;
+    });
 
 #ifdef AMREX_USE_OMP
     #pragma omp parallel if (amrex::Gpu::notInLaunchRegion())

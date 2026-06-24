@@ -104,8 +104,11 @@ void extendedMain()
     }
     else
     {
+        ConsolidatedData consolSource;
+        LGFCommBuffers buff;
+
         // performing addition of box values
-        addEverySourceBox(sourceMF, targetMF, geom, box_tag_arr, n_lookup);
+        addEverySourceBox(sourceMF, targetMF, geom, box_tag_arr, n_lookup, consolSource, buff);
 
         // this line is not needed because the code doesn't use the MF again at all, and the plot doesn't use ghost cells
         // UPDATE: this line is needed for residual computations
@@ -135,9 +138,12 @@ void extendedMain()
     // building a MultiFab to visualize the cells that are being tagged
     amrex::MultiFab tagRegion(sourceMF.boxArray(), sourceMF.DistributionMap(), 1, 0);
 
+    amrex::Vector<int> h_box_tag_arr(num_local_boxes);
+    amrex::Gpu::copy(amrex::Gpu::deviceToHost, box_tag_arr.begin(), box_tag_arr.end(), h_box_tag_arr.begin());
+
     for (MFIter mfi(tagRegion); mfi.isValid(); ++mfi) 
     {
-        amrex::Real val = (box_tag_arr[mfi.LocalIndex()] == 1) ? 1.0 : 0.0;
+        amrex::Real val = (h_box_tag_arr[mfi.LocalIndex()] == 1) ? 1.0 : 0.0;
         tagRegion[mfi].setVal<RunOn::Device>(val);
     }
 

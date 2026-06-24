@@ -11,7 +11,7 @@ void consolidateMultiFab(ConsolidatedData& consolPhi, const amrex::MultiFab& phi
 
     // copy the box tagging array to host to setup h_local_meta to handle device side copy
     amrex::Vector<int> h_box_tag_arr(num_local_boxes);
-    amrex::Gpu::copy(amrex::Gpu::deviceToHost, d_box_tag_arr.begin(), d_box_tag_arr.end(), h_box_tag_arr.begin());
+    amrex::Gpu::copy(amrex::Gpu::deviceToHost, box_tag_arr.begin(), box_tag_arr.end(), h_box_tag_arr.begin());
 
     int my_data_size = 0;
     int my_meta_size = 0; // Index counter for active boxes
@@ -148,12 +148,12 @@ void consolidateMultiFab(ConsolidatedData& consolPhi, const amrex::MultiFab& phi
     // device side offset updating for correct unpacking
     buff.d_data_displs.resize(nprocs + 1);
     buff.d_meta_displs.resize(nprocs + 1);
-    amrex::Gpu::copy(amrex::Gpu::hostToDevice, data_displs.begin(), data_displs.end(), d_data_displs.begin());
-    amrex::Gpu::copy(amrex::Gpu::hostToDevice, meta_displs.begin(), meta_displs.end(), d_meta_displs.begin());
+    amrex::Gpu::copy(amrex::Gpu::hostToDevice, data_displs.begin(), data_displs.end(), buff.d_data_displs.begin());
+    amrex::Gpu::copy(amrex::Gpu::hostToDevice, meta_displs.begin(), meta_displs.end(), buff.d_meta_displs.begin());
 
     FabMetaData* global_meta_ptr = consolPhi.metadata.dataPtr();
-    int* meta_displs_ptr = d_meta_displs.dataPtr();
-    int* data_displs_ptr = d_data_displs.dataPtr();
+    int* meta_displs_ptr = buff.d_meta_displs.dataPtr();
+    int* data_displs_ptr = buff.d_data_displs.dataPtr();
 
     if (total_meta_size > 0)
     {
