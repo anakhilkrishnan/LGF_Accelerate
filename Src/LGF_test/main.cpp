@@ -90,8 +90,12 @@ void extendedMain()
 
     auto compute_start_time = amrex::second();
 
+    // DeviceVector to store tag values for each box belonging to this MPI rank
+    const int num_local_boxes = sourceMF.local_size();
+    amrex::Gpu::DeviceVector<int> box_tag_arr(num_local_boxes, 0);
+
     // running the tagging algorithmn and obtaining the box tags as an array of 0s and 1s
-    amrex::Vector<int> box_tag_arr = tagSource(sourceMF, source_tag_thresh);
+    tagSource(box_tag_arr, sourceMF, source_tag_thresh);
 
     if (use_FMM)
     {

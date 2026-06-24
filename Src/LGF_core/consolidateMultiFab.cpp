@@ -2,18 +2,11 @@
 
 using namespace amrex;
 
-ConsolidatedData consolidateMultiFab(const amrex::MultiFab& phifab, const amrex::Geometry& geom, amrex::Vector<int> box_tag_arr)
+void consolidateMultiFab(ConsolidatedData& consolPhi, const amrex::MultiFab& phifab, const amrex::Geometry& geom, amrex::Gpu::DeviceVector<int>& box_tag_arr, LGFCommBuffers& buff)
 {
     BL_PROFILE("<Communicate> consolidateMultiFab()");
 
-    // Each MPI rank packs its tagged boxes into a flat data vector and metadata vector
-    Vector<Real> local_data;
-    Vector<FabMetaData> local_meta;
-
-    // Bulk copy from device to a pinned host MultiFab once
-    amrex::MultiFab host_mf(phifab.boxArray(), phifab.DistributionMap(), phifab.nComp(), phifab.nGrow(),
-                            amrex::MFInfo().SetArena(amrex::The_Pinned_Arena()));
-    amrex::dtoh_memcpy(host_mf, phifab);
+    
 
     for (MFIter mfi(host_mf); mfi.isValid(); ++mfi)
     {
