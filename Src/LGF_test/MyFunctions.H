@@ -4,8 +4,15 @@
 #include <AMReX_Geometry.H>
 #include <AMReX_MultiFab.H>
 #include <AMReX_BCRec.H>
+#include <AMReX.H>
+#include <AMReX_Print.H>
+#include <AMReX_PlotFileUtil.H>
+#include <AMReX_ParmParse.H>
+#include <AMReX_BLProfiler.H>
+#include <string>
 
-#include <LGFCore.H>
+#include <LGFPoissonSolver.H>
+#include <directSumLGF.H>
 
 using namespace amrex;
 

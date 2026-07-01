@@ -12,10 +12,6 @@
 // defining structs used within LGFcore
 struct FabMetaData
 {
-    /**
-     * @brief This is a basic struct that stores box-wise meta data: box number offset, box lo, box hi
-     * 
-     */
     int offset;
     amrex::IntVect lo;
     amrex::IntVect hi;

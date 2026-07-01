@@ -1,10 +1,3 @@
-#include <AMReX.H>
-#include <AMReX_Print.H>
-#include <AMReX_PlotFileUtil.H>
-#include <AMReX_ParmParse.H>
-#include <AMReX_BLProfiler.H>
-#include <string>
-
 #include <MyFunctions.H>
 
 using namespace amrex;
@@ -100,15 +93,14 @@ void extendedMain()
     if (use_FMM)
     {
         // using BBFMM2d to compute the result of the LGF problem
-        solveFMM(sourceMF, targetMF, geom, n_chebyshev, n_lookup);
+        // solveFMM(sourceMF, targetMF, geom, n_chebyshev, n_lookup);
     }
     else
     {
-        ConsolidatedData consolSource;
-        LGFCommBuffers buff;
+        std::unique_ptr<LGFPoissonSolver> poisson_solver;
+        poisson_solver = std::make_unique<directSumLGF>(geom, n_lookup);
 
-        // performing addition of box values
-        addEverySourceBox(sourceMF, targetMF, geom, box_tag_arr, n_lookup, consolSource, buff);
+        poisson_solver->solvePoisson(sourceMF, targetMF, box_tag_arr);
 
         // this line is not needed because the code doesn't use the MF again at all, and the plot doesn't use ghost cells
         // UPDATE: this line is needed for residual computations
