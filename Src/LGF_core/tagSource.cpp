@@ -28,23 +28,14 @@ void tagSource(amrex::Gpu::DeviceVector<int>& box_tag_arr, const amrex::MultiFab
         d_flags_ptr[i] = 0;
     });
 
-#ifdef AMREX_USE_OMP
-    #pragma omp parallel if (amrex::Gpu::notInLaunchRegion())
-#endif
-    for(MFIter mfi(phi, amrex::TilingIfNotGPU()); mfi.isValid(); ++mfi)
-    {
-        const Box& bx = mfi.tilebox();
-        auto const& phi_arr = phi.const_array(mfi);
-        const int local_idx = mfi.LocalIndex();
+    auto const& ma = phi.const_arrays();   // MultiArray4: all local boxes
 
-        // check every box for threshold breach. if any true obtained, write box_tag_arr as 1
-        // race condition might happen here (?), find out
-        amrex::ParallelFor(bx, [=] AMREX_GPU_DEVICE (int i, int j, int k)
+    amrex::ParallelFor(phi, [=] AMREX_GPU_DEVICE (int box_no, int i, int j, int k)
+    {
+        if (d_flags_ptr[box_no] != 0) return;   // early-out, now indexed by box_no
+        if (amrex::Math::abs(ma[box_no](i,j,k)) > tag_thresh)
         {
-            if (amrex::Math::abs(phi_arr(i,j,k)) > tag_thresh)
-            {
-                amrex::Gpu::Atomic::Max(&d_flags_ptr[local_idx], 1);
-            }
-        });
-    }
+            amrex::Gpu::Atomic::Max(&d_flags_ptr[box_no], 1);
+        }
+    });
 }

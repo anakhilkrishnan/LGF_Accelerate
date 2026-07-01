@@ -28,7 +28,7 @@ LGF_HD inline double farField2D(double nondimx, double nondimy)
 
         // computing higher order terms
         double cos2 = (x2 - y2) / r2;
-        double sin2 = (2.0 * nondimx * nondimx) / r2;
+        double sin2 = (2.0 * nondimx * nondimy) / r2;
         double cos4 = (cos2 * cos2) - (sin2 * sin2);
         
         double g1 = -cos4 / (24.0 * M_PI * r2);

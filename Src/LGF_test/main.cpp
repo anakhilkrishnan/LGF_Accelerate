@@ -95,17 +95,17 @@ void extendedMain()
         // using BBFMM2d to compute the result of the LGF problem
         // solveFMM(sourceMF, targetMF, geom, n_chebyshev, n_lookup);
     }
-    else
-    {
-        std::unique_ptr<LGFPoissonSolver> poisson_solver;
-        poisson_solver = std::make_unique<directSumLGF>(geom, n_lookup);
+    // else
+    // {
+    //     std::unique_ptr<LGFPoissonSolver> poisson_solver;
+    //     poisson_solver = std::make_unique<directSumLGF>(geom, n_lookup);
 
-        poisson_solver->solvePoisson(sourceMF, targetMF, box_tag_arr);
+    //     poisson_solver->solvePoisson(sourceMF, targetMF, box_tag_arr);
 
-        // this line is not needed because the code doesn't use the MF again at all, and the plot doesn't use ghost cells
-        // UPDATE: this line is needed for residual computations
-        targetMF.FillBoundary(geom.periodicity());
-    }
+    //     // this line is not needed because the code doesn't use the MF again at all, and the plot doesn't use ghost cells
+    //     // UPDATE: this line is needed for residual computations
+    //     targetMF.FillBoundary(geom.periodicity());
+    // }
 
     // marking end time and elapsed time
     auto compute_end_time = amrex::second();
