@@ -13,8 +13,7 @@
 
 #include <LGFPoissonSolver.H>
 #include <directSumLGF.H>
-
-using namespace amrex;
+#include <bbfmm2dLGF.H>
 
 void extendedMain();
 

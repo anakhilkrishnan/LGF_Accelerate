@@ -25,9 +25,9 @@ amrex::Real computeLGF(int n_lookup,
                             deltaz = dz_dist / dz_val);
     
     // convert physical distance to integer grid offsets
-    int AMREX_D_DECL(nx = amrex::Math::abs(amrex::Math::round(dx_dist / dx_val)),
-                    ny = amrex::Math::abs(amrex::Math::round(dy_dist / dy_val)),
-                    nz = amrex::Math::abs(amrex::Math::round(dz_dist / dz_val)));
+    int AMREX_D_DECL(nx = amrex::Math::round(amrex::Math::abs(dx_dist / dx_val)),
+                    ny = amrex::Math::round(amrex::Math::abs(dy_dist / dy_val)),
+                    nz = amrex::Math::round(amrex::Math::abs(dz_dist / dz_val)));
 
     // 2D Kernel computations
 #if AMREX_SPACEDIM == 2

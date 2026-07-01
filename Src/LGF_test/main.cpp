@@ -1,7 +1,5 @@
 #include <MyFunctions.H>
 
-using namespace amrex;
-
 int main(int argc, char* argv[])
 {
     amrex::Initialize(argc,argv);
@@ -19,11 +17,10 @@ void extendedMain()
     auto start_time = amrex::second();
 
     // variables to be read from ParmParse
-    int n_cell, max_grid_size, n_chebyshev, n_lookup;
+    int n_cell, max_grid_size, n_chebyshev, n_lookup, solver_type;
     amrex::Real source_tag_thresh;
     amrex::Array<amrex::Real,AMREX_SPACEDIM> phy_dom_lo, phy_dom_hi;
     bool write_plot = false;
-    bool use_FMM = false;
     bool compare_MLMG = false;
 
     // setting a default plotfile prefix in case not specified in inputs
@@ -39,7 +36,7 @@ void extendedMain()
     pp.get("n_chebyshev", n_chebyshev);
     pp.get("n_lookup", n_lookup);
 
-    pp.query("use_FMM", use_FMM);
+    pp.query("solver_type", solver_type);
     pp.query("write_plot", write_plot);
     pp.query("plot_prefix", plot_prefix);
     pp.query("compare_MLMG", compare_MLMG);
@@ -48,16 +45,16 @@ void extendedMain()
     int n_ghost = 1;
     int n_comp = 1;
 
-    BoxArray ba;
-    Geometry geom;
+    amrex::BoxArray ba;
+    amrex::Geometry geom;
 
     // Define the computational domain
-    IntVect dom_lo(AMREX_D_DECL(       0,        0,        0));
-    IntVect dom_hi(AMREX_D_DECL(n_cell-1, n_cell-1, n_cell-1));
-    Box domain(dom_lo, dom_hi);
+    amrex::IntVect dom_lo(AMREX_D_DECL(       0,        0,        0));
+    amrex::IntVect dom_hi(AMREX_D_DECL(n_cell-1, n_cell-1, n_cell-1));
+    amrex::Box domain(dom_lo, dom_hi);
 
     // Define the periodicity
-    Vector<int> is_periodic(AMREX_SPACEDIM, 0); // 0 = not periodic
+    amrex::Vector<int> is_periodic(AMREX_SPACEDIM, 0); // 0 = not periodic
 
     // Initialize the boxarray "ba" from the single box "bx"
     ba.define(domain);
@@ -65,13 +62,13 @@ void extendedMain()
     ba.maxSize(max_grid_size);
 
     // This defines the physical box, [0,1] in each direction.
-    RealBox real_box(phy_dom_lo, phy_dom_hi);
+    amrex::RealBox real_box(phy_dom_lo, phy_dom_hi);
 
     // This defines a Geometry object
-    geom.define(domain,&real_box,CoordSys::cartesian,is_periodic.data());
+    geom.define(domain,&real_box,amrex::CoordSys::cartesian,is_periodic.data());
 
     // How Boxes are distrubuted among MPI processes
-    DistributionMapping dm(ba);
+    amrex::DistributionMapping dm(ba);
 
     // creating source and target multifabs
     amrex::MultiFab sourceMF(ba, dm, n_comp, n_ghost);
@@ -81,31 +78,45 @@ void extendedMain()
     initializeSourceMultiFab(sourceMF, geom);
     targetMF.setVal(0.0);
 
-    auto compute_start_time = amrex::second();
+    
 
     // DeviceVector to store tag values for each box belonging to this MPI rank
     const int num_local_boxes = sourceMF.local_size();
     amrex::Gpu::DeviceVector<int> box_tag_arr(num_local_boxes, 0);
 
+    // creating a PoissonSolver object
+    std::unique_ptr<LGFPoissonSolver> poisson_solver;
+
+    if (solver_type == 1)
+    {
+        // create object for direct summation solver
+        poisson_solver = std::make_unique<directSumLGF>(geom, n_lookup);    
+    }
+    else if (solver_type == 2)
+    {
+        // create object for bbfmm2d solver
+        poisson_solver = std::make_unique<bbfmm2dLGF>(geom, n_lookup, n_chebyshev);
+    }
+    else if (solver_type == 3)
+    {   
+        // create object for advanced FMM library
+        amrex::Abort("Solver_type requested not built yet.");
+    }
+    else
+    {
+        amrex::Abort("Solver_type requested does not exist.");
+    }
+
+    auto compute_start_time = amrex::second();
+
     // running the tagging algorithmn and obtaining the box tags as an array of 0s and 1s
     tagSource(box_tag_arr, sourceMF, source_tag_thresh);
 
-    if (use_FMM)
-    {
-        // using BBFMM2d to compute the result of the LGF problem
-        // solveFMM(sourceMF, targetMF, geom, n_chebyshev, n_lookup);
-    }
-    // else
-    // {
-    //     std::unique_ptr<LGFPoissonSolver> poisson_solver;
-    //     poisson_solver = std::make_unique<directSumLGF>(geom, n_lookup);
+    poisson_solver->solvePoisson(sourceMF, targetMF, box_tag_arr);
 
-    //     poisson_solver->solvePoisson(sourceMF, targetMF, box_tag_arr);
-
-    //     // this line is not needed because the code doesn't use the MF again at all, and the plot doesn't use ghost cells
-    //     // UPDATE: this line is needed for residual computations
-    //     targetMF.FillBoundary(geom.periodicity());
-    // }
+    // this line is not needed because the code doesn't use the MF again at all, and the plot doesn't use ghost cells
+    // UPDATE: this line is needed for residual computations
+    targetMF.FillBoundary(geom.periodicity());
 
     // marking end time and elapsed time
     auto compute_end_time = amrex::second();
@@ -133,10 +144,10 @@ void extendedMain()
     amrex::Vector<int> h_box_tag_arr(num_local_boxes);
     amrex::Gpu::copy(amrex::Gpu::deviceToHost, box_tag_arr.begin(), box_tag_arr.end(), h_box_tag_arr.begin());
 
-    for (MFIter mfi(tagRegion); mfi.isValid(); ++mfi) 
+    for (amrex::MFIter mfi(tagRegion); mfi.isValid(); ++mfi) 
     {
         amrex::Real val = (h_box_tag_arr[mfi.LocalIndex()] == 1) ? 1.0 : 0.0;
-        tagRegion[mfi].setVal<RunOn::Device>(val);
+        tagRegion[mfi].setVal<amrex::RunOn::Device>(val);
     }
 
     if (write_plot)

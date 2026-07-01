@@ -2,7 +2,7 @@
 #define LGFKERNEL_HPP
 
 #include <cmath>
-#include <kernel_Types.hpp>
+
 
 class kernel_LGF : public kernel_Base
 {

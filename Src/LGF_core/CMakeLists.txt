@@ -10,11 +10,14 @@ add_library(LGF_core_lib STATIC
     directSum/directSumKernel.H
     directSum/directSumLGF.H
     directSum/directSumLGF.cpp
+    bbfmm2d/bbfmm2dKernel.H
+    bbfmm2d/bbfmm2dLGF.H
+    bbfmm2d/bbfmm2dLGF.cpp
     ${BBFMM2D_SOURCES}
     ${BBFMM2D_HEADERS}
 )
 
-setup_target_for_cuda_compilation(LGF_core_lib)
+# setup_target_for_cuda_compilation(LGF_core_lib)
 
 # Tell CMake where the headers from local sources and submodules are
 target_include_directories(LGF_core_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
