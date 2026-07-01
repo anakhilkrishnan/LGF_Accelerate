@@ -1,11 +1,12 @@
-#include <vector>
+#include <bbfmm2dLGF.H>
 
-#include <LGFCore.H>
-// PENDING: requires more kernels from BBFMM2d=
-#include <BBFMM2D.hpp>
-#include <LGFKernel.hpp>
+bbfmm2dLGF::bbfmm2dLGF(const amrex::Geometry& geom_in, const int n_look_in, const int n_cheb_in)
+    : geom(geom_in), n_lookup(n_look_in), n_chebyshev(n_cheb_in)
+{
+       
+}
 
-void solveFMM(const amrex::MultiFab& source, amrex::MultiFab& target, const amrex::Geometry& geom) 
+void bbfmm2dLGF::solvePoisson(const amrex::MultiFab& source, amrex::MultiFab& target, const amrex::Gpu::DeviceVector<int>& source_box_tag_arr)
 {
     // Profiling block for AMReX's TinyProfiler
     BL_PROFILE("<Compute> solveFMM()");
@@ -17,17 +18,43 @@ void solveFMM(const amrex::MultiFab& source, amrex::MultiFab& target, const amre
     // PENDING: box tagging has not been worked out for this yet
 
     const amrex::Box& domain = geom.Domain();
+
     int nx = domain.length(0);
     int ny = domain.length(1);
-    unsigned long N_total = nx * ny;
+
+    // computing values to include ghost cells in FMM computations
+    int n_ghost = target.nGrow();
+    int nx_ghost = nx + (2 * n_ghost);
+    int ny_ghost = ny + (2 * n_ghost);
+
+    unsigned long N_total = nx_ghost * ny_ghost;
 
     std::vector<Point> all_locations(N_total);
     std::vector<double> local_charges(N_total, 0.0);
 
     amrex::GpuArray<amrex::Real, AMREX_SPACEDIM> dx = geom.CellSizeArray();
     amrex::GpuArray<amrex::Real, AMREX_SPACEDIM> prob_lo = geom.ProbLoArray();
-    amrex::Real dvol = dx[0] * dx[1]; 
+    amrex::Real dvol = dx[0] * dx[1];
 
+    amrex::GpuArray<amrex::Real, AMREX_SPACEDIM> prob_lo_ghost;
+    prob_lo_ghost[0] = prob_lo[0] - (n_ghost * dx[0]);
+    prob_lo_ghost[1] = prob_lo[1] - (n_ghost * dx[1]);
+
+    // fill all_locations, including ghost cells
+    for (int j = 0; j < ny_ghost; ++j)
+    {
+        amrex::Real y_src = prob_lo_ghost[1] + (j + 0.5) * dx[1];
+
+        for (int i = 0; i < nx_ghost; ++i)
+        {
+            amrex::Real x_src = prob_lo_ghost[0] + (i + 0.5) * dx[0];
+
+            int flat_idx = j * nx_ghost + i;
+            all_locations[flat_idx] = {x_src, y_src};
+        }
+    }
+
+    // fill local_charges, only in validbox()
     for (amrex::MFIter mfi(source); mfi.isValid(); ++mfi) 
     {
         const amrex::Box& valid_box = mfi.validbox();
@@ -35,13 +62,13 @@ void solveFMM(const amrex::MultiFab& source, amrex::MultiFab& target, const amre
 
         for (int j = valid_box.smallEnd()[1]; j <= valid_box.bigEnd()[1]; ++j) 
         {
-            amrex::Real y_src = prob_lo[1] + (j + 0.5) * dx[1];
             for (int i = valid_box.smallEnd()[0]; i <= valid_box.bigEnd()[0]; ++i) 
             {
-                amrex::Real x_src = prob_lo[0] + (i + 0.5) * dx[0];
+                // Shift AMReX index to match the expanded flat array index
+                int shifted_i = i + n_ghost;
+                int shifted_j = j + n_ghost;
+                int flat_idx = shifted_j * nx_ghost + shifted_i;
 
-                int flat_idx = j * nx + i;
-                all_locations[flat_idx] = {x_src, y_src}; // Every rank generates the identical coordinate map
                 local_charges[flat_idx] = phi_arr(i, j, 0) * dvol; 
             }
         }
@@ -66,46 +93,37 @@ void solveFMM(const amrex::MultiFab& source, amrex::MultiFab& target, const amre
 #endif
 
     // setup the BBFMM solver 
-    unsigned short nChebNodes = 10; 
+    unsigned short nChebNodes = n_chebyshev; 
     unsigned m = 1;                 
 
     // Instantiate the tree without any padded targets!
     H2_2D_Tree myTree(nChebNodes, global_charges.data(), all_locations, N_total, m);
 
-    // instantiate LGF Kernel that inherits pre-built Log kernel
-    // explicitly casted into double in case AMReX is compiled as float
-    kernel_LGF myKernel((double)dx[0], (double)dx[1]); 
-
     // Evaluate
     std::vector<double> calculated_potentials(N_total, 0.0);
+
+    kernel_LGF myKernel((double)dx[0], (double)dx[1], n_lookup); 
     myKernel.calculate_Potential(myTree, calculated_potentials.data());
 
     // unpacking step: take the long vector of computed potentials and reconstruct
     // the target MultiFab 
 
-    // offset values needed for reconstructing 
-    double total_charge = 0.0;
-    for (double q : global_charges) {
-        total_charge += q;
-    }
-    
-    double C = 0.2573420803;
-    double C_prime = C - (1.0 / (4.0 * M_PI)) * std::log(dx[0] * dx[0]); 
-
-    for (amrex::MFIter mfi(target); mfi.isValid(); ++mfi) 
+    for (amrex::MFIter mfi(target, amrex::TilingIfNotGPU()); mfi.isValid(); ++mfi) 
     {
-        const amrex::Box& valid_box = mfi.validbox();
+        const amrex::Box& grown_box = mfi.growntilebox(n_ghost);
         auto const& tar_arr = target.array(mfi);
 
-        for (int j = valid_box.smallEnd()[1]; j <= valid_box.bigEnd()[1]; ++j) 
+        for (int j = grown_box.smallEnd()[1]; j <= grown_box.bigEnd()[1]; ++j) 
         {
-            for (int i = valid_box.smallEnd()[0]; i <= valid_box.bigEnd()[0]; ++i) 
+            for (int i = grown_box.smallEnd()[0]; i <= grown_box.bigEnd()[0]; ++i) 
             {
-                int flat_idx = j * nx + i;
+                // Shift AMReX index to match the expanded flat index
+                int shifted_i = i + n_ghost;
+                int shifted_j = j + n_ghost;
+                int flat_idx = shifted_j * nx_ghost + shifted_i;
 
                 // update corrected target values
-                double pure_log_potential = calculated_potentials[flat_idx];
-                tar_arr(i, j, 0) = (1.0 / (2.0 * M_PI)) * pure_log_potential + (C_prime * total_charge);
+                tar_arr(i, j, 0) = calculated_potentials[flat_idx];
             }
         }
     }

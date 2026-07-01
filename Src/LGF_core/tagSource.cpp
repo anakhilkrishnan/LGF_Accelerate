@@ -1,8 +1,8 @@
-#include <LGFCore.H>
+#include <LGFPoissonSolver.H>
 
 using namespace amrex;
 
-amrex::Vector<int> tagSource(const amrex::MultiFab& phifab, const amrex::Real source_threshold)
+void tagSource(amrex::Gpu::DeviceVector<int>& box_tag_arr, const amrex::MultiFab& phi, const amrex::Real tag_thresh)
 {
     // perform grid tagging by assigning an int to each box
     // 0 = to be excluded during packing
@@ -11,40 +11,31 @@ amrex::Vector<int> tagSource(const amrex::MultiFab& phifab, const amrex::Real so
     // adding profiling blocks for Tiny/Base profilers
     BL_PROFILE("<Communicate> tagSource()");
 
-    const int num_local_boxes = phifab.local_size();
+    const int num_local_boxes = phi.local_size();
 
-    // making vectors corresponding to device and host on each MPI rank
-    amrex::Gpu::DeviceVector<int> d_is_box_tagged(num_local_boxes, 0);
-    amrex::Vector<int> is_box_tagged(num_local_boxes, 0);
-
-    // obtaining raw pointers for GPU
-    int* d_flags_ptr = d_is_box_tagged.dataPtr();
-
-#ifdef AMREX_USE_OMP
-    #pragma omp parallel if (amrex::Gpu::notInLaunchRegion())
-#endif
-    for(MFIter mfi(phifab, amrex::TilingIfNotGPU()); mfi.isValid(); ++mfi)
+    // ensure capacity matches without forcing a reallocation if it's already sized
+    if (box_tag_arr.size() != num_local_boxes) 
     {
-        const Box& bx = mfi.tilebox();
-        auto const& phi_arr = phifab.const_array(mfi);
-        const int local_idx = mfi.LocalIndex();
-
-        // check every box for threshold breach. if any true obtained, write d_is_box_tagged as 1
-        // race condition might happen here (?), find out
-        amrex::ParallelFor(bx, [=] AMREX_GPU_DEVICE (int i, int j, int k)
-        {
-            if (amrex::Math::abs(phi_arr(i,j,k)) > source_threshold)
-            {
-                d_flags_ptr[local_idx] = 1;
-            }
-        });
+        box_tag_arr.resize(num_local_boxes);
     }
 
-    // waiting until all GPU streams have completed their work
-    amrex::Gpu::Device::synchronize();
+    // obtain raw pointers for GPU
+    int* d_flags_ptr = box_tag_arr.dataPtr();
+    
+    // utilize the AMReX compute stream to zero the array natively on the GPU
+    amrex::ParallelFor(num_local_boxes, [=] AMREX_GPU_DEVICE (int i) 
+    {
+        d_flags_ptr[i] = 0;
+    });
 
-    // copy back the is_box_tagged array from GPU
-    amrex::Gpu::copy(amrex::Gpu::deviceToHost, d_is_box_tagged.begin(), d_is_box_tagged.end(), is_box_tagged.begin());
+    auto const& ma = phi.const_arrays();   // MultiArray4: all local boxes
 
-    return is_box_tagged;
+    amrex::ParallelFor(phi, [=] AMREX_GPU_DEVICE (int box_no, int i, int j, int k)
+    {
+        if (d_flags_ptr[box_no] != 0) return;   // early-out, now indexed by box_no
+        if (amrex::Math::abs(ma[box_no](i,j,k)) > tag_thresh)
+        {
+            amrex::Gpu::Atomic::Max(&d_flags_ptr[box_no], 1);
+        }
+    });
 }

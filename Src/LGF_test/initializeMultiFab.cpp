@@ -35,3 +35,26 @@ void initializeSourceMultiFab(amrex::MultiFab& phi_mf, amrex::Geometry& phi_geom
             });
     }
 }
+
+void syncBCs(amrex::MultiFab& phi_mf_dest, amrex::MultiFab& phi_mf_src, amrex::Geometry& phi_geom, int n_ghost)
+{
+    // adding profiling blocks for Tiny/Base profilers
+    BL_PROFILE("<Setup> Extracting FMM Boundaries for MLMG");
+        
+    for (MFIter mfi(phi_mf_dest, amrex::TilingIfNotGPU()); mfi.isValid(); ++mfi) 
+    {
+        const Box& gbx = mfi.growntilebox(n_ghost);
+        const Box& vbx = mfi.validbox(); // The strict interior box
+        auto const& mlmg_arr = phi_mf_dest.array(mfi);
+        auto const& fmm_arr = phi_mf_src.array(mfi);
+        
+        ParallelFor(gbx, [=] AMREX_GPU_DEVICE(int i, int j, int k) 
+        {
+            // Only populate the ghost cells (the Dirichlet boundaries)
+            // The interior remains 0.0 to force MLMG to solve it
+            if (!vbx.contains(i, j, k)) {
+                mlmg_arr(i,j,k) = fmm_arr(i,j,k);
+            }
+        });
+    }
+}

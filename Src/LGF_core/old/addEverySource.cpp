@@ -2,37 +2,22 @@
 
 using namespace amrex;
 
-void addEverySourceBox(const amrex::MultiFab& source, amrex::MultiFab& target, const amrex::Geometry& geom, amrex::Vector<int> box_tag_arr) 
+void addEverySourceBox(const amrex::MultiFab& source, amrex::MultiFab& target, const amrex::Geometry& geom, amrex::Gpu::DeviceVector<int>& box_tag_arr, int n_lookup, ConsolidatedData& consolSource, LGFCommBuffers& buff) 
 {
     // adding profiling blocks for Tiny/Base profilers
     BL_PROFILE("<Compute> addEverySourceBox()");
 
     //extract cell-sizes and physical dom_lo for x,y,z computations
-    GpuArray<amrex::Real, AMREX_SPACEDIM> dx = geom.CellSizeArray();
-    GpuArray<amrex::Real, AMREX_SPACEDIM> prob_lo = geom.ProbLoArray();
+    amrex::GpuArray<amrex::Real, AMREX_SPACEDIM> dx = geom.CellSizeArray();
+    amrex::GpuArray<amrex::Real, AMREX_SPACEDIM> prob_lo = geom.ProbLoArray();
 
     // Read data from the source MultiFab and make it available to all processes
-    ConsolidatedData consolSource = consolidateMultiFab(source, geom, box_tag_arr);
-    
-    // allocating space in VRAM for the source data and metadata
-    amrex::Gpu::DeviceVector<Real> d_data(consolSource.data.size());
-    amrex::Gpu::DeviceVector<FabMetaData> d_meta(consolSource.metadata.size());
-
-    // copying the consolidated data from CPU to GPU
-    amrex::Gpu::copy(amrex::Gpu::hostToDevice, 
-                     consolSource.data.begin(), consolSource.data.end(), 
-                     d_data.begin());
-                     
-    amrex::Gpu::copy(amrex::Gpu::hostToDevice, 
-                     consolSource.metadata.begin(), consolSource.metadata.end(), 
-                     d_meta.begin());
-
-    // the above lines collapse into CPU use when compiled without USE_CUDA=TRUE
+    consolidateMultiFab(consolSource, source, geom, box_tag_arr, buff);
 
     // export the consolidated data as pointers to the target MFIter
     int num_blocks = consolSource.metadata.size();
-    const Real* data_ptr = d_data.data();
-    const FabMetaData* meta_ptr = d_meta.data();
+    const Real* data_ptr = consolSource.data.dataPtr();
+    const FabMetaData* meta_ptr = consolSource.metadata.dataPtr();
 
     amrex::Box dom = geom.Domain();
     
@@ -91,8 +76,10 @@ void addEverySourceBox(const amrex::MultiFab& source, amrex::MultiFab& target, c
                             amrex::Real x_src = prob_lo[0] + ((si + 0.5) * block.dx[0]);
                             
                             // compute the LGF kernel for the current source-target cell pair
-                            amrex::Real lgf = computeLGF(AMREX_D_DECL(x_tar, y_tar, z_tar),
-                                                            AMREX_D_DECL(x_src, y_src, z_src), block.dx[0]);
+                            amrex::Real lgf = computeLGF(n_lookup, 
+                                                        AMREX_D_DECL(x_tar, y_tar, z_tar),
+                                                        AMREX_D_DECL(x_src, y_src, z_src),
+                                                        AMREX_D_DECL(block.dx[0], block.dx[1], block.dx[2]));
                                                             
                             
                             
@@ -105,7 +92,4 @@ void addEverySourceBox(const amrex::MultiFab& source, amrex::MultiFab& target, c
             phi(i, j, k) = total_contribution;
         });
     }
-
-    // wait for the GPU to synchnorize
-    amrex::Gpu::streamSynchronize();
 }

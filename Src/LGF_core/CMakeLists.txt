@@ -4,12 +4,15 @@ file(GLOB BBFMM2D_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/BBFMM2D/hea
 
 # Define the library and its source files
 add_library(LGF_core_lib STATIC
-    addEverySource.cpp
-    consolidateMultiFab.cpp
+    LGFPoissonSolver.H
     tagSource.cpp
-    solveBBFMM.cpp
-    LGFCore.H
-    LGFKernel.hpp
+    LGFKernels.H
+    directSum/directSumKernel.H
+    directSum/directSumLGF.H
+    directSum/directSumLGF.cpp
+    bbfmm2d/bbfmm2dKernel.H
+    bbfmm2d/bbfmm2dLGF.H
+    bbfmm2d/bbfmm2dLGF.cpp
     ${BBFMM2D_SOURCES}
     ${BBFMM2D_HEADERS}
 )
@@ -18,7 +21,10 @@ add_library(LGF_core_lib STATIC
 
 # Tell CMake where the headers from local sources and submodules are
 target_include_directories(LGF_core_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}
+                                                ${CMAKE_CURRENT_SOURCE_DIR}/directSum
+                                                ${CMAKE_CURRENT_SOURCE_DIR}/bbfmm2d
                                                 ${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/BBFMM2D/header)
 
 # Link to AMReX so the core knows about MultiFabs and MPI
+# add Eigen3::Eigen for bbfmm2d
 target_link_libraries(LGF_core_lib PUBLIC AMReX::amrex Eigen3::Eigen)
