@@ -8,7 +8,7 @@ add_library(LGF_core_lib STATIC
     tagSource.cpp
     LGFKernels.H
     directSum/directSumKernel.H
-    directSum/directSumLGF.H
+    directSum/DirectSumLGF.H
     directSum/directSumLGF.cpp
     bbfmm2d/bbfmm2dKernel.H
     bbfmm2d/bbfmm2dLGF.H
@@ -17,7 +17,9 @@ add_library(LGF_core_lib STATIC
     ${BBFMM2D_HEADERS}
 )
 
-# setup_target_for_cuda_compilation(LGF_core_lib)
+if(AMReX_GPU_BACKEND STREQUAL "CUDA")
+    setup_target_for_cuda_compilation(LGF_core_lib)
+endif()
 
 # Tell CMake where the headers from local sources and submodules are
 target_include_directories(LGF_core_lib PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}

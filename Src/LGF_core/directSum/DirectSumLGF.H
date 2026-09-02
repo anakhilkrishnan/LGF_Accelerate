@@ -3,6 +3,10 @@
 
 #include <LGFPoissonSolver.H>
 #include <directSumKernel.H>
+#include <AMReX_iMultiFab.H>
+#include <AMReX_BCRec.H>
+#include <AMReX_ParallelDescriptor.H>
+#include <AMReX_BLProfiler.H>
 
 struct FabMetaData
 {
@@ -13,7 +17,7 @@ struct FabMetaData
     amrex::GpuArray<amrex::Real, AMREX_SPACEDIM> dx;
 };
 
-class directSumLGF : public LGFPoissonSolver
+class DirectSumLGF : public LGFPoissonSolver
 {
     private:
 
@@ -24,7 +28,6 @@ class directSumLGF : public LGFPoissonSolver
     // data from what was once LGFCommBuffers
     // host buffers
     amrex::Vector<FabMetaData> h_local_meta;
-    amrex::Vector<int>         h_source_box_tag_arr;
     amrex::Vector<int>         h_box_data_offsets;
 
     // MPI bookkeeping (host; sized to nprocs once)
@@ -45,11 +48,12 @@ class directSumLGF : public LGFPoissonSolver
     amrex::Gpu::DeviceVector<FabMetaData> consolMetadata;
 
     // supporting functions
-    void consolidateMultiFab(const amrex::MultiFab& phi, const amrex::Gpu::DeviceVector<int>& source_box_tag_arr);
+    void consolidateMultiFab(const amrex::MultiFab& phi, const amrex::BoxArray& tag_ba);
+    void regridOnto(const amrex::Geometry& new_geom, const amrex::BoxArray& new_ba, const amrex::DistributionMapping& new_dm) override;
 
-    directSumLGF(const amrex::Geometry& geom_in, const int n_look_in);
-    void solvePoisson(const amrex::MultiFab& source, amrex::MultiFab& target, const amrex::Gpu::DeviceVector<int>& source_box_tag_arr) override;
-
+    DirectSumLGF(const amrex::Geometry& geom_in, const int n_look_in);
+    void solvePoisson(const amrex::MultiFab& source, amrex::MultiFab& target, const amrex::BoxArray& tag_ba) override;
+    void solveNodalPoisson(const amrex::MultiFab& source, amrex::MultiFab& target, const amrex::BoxArray& tag_ba) override;
 };
 
 #endif

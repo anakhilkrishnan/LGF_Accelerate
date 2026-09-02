@@ -3,6 +3,12 @@
 
 #include <cmath>
 
+// this header is written without use of AMReX because it must supply to
+// third-party solvers as well
+
+// options to check if AMReX is using device, if AMReX is running in
+// float/double, are also set up
+
 #if defined(__CUDACC__) || defined(__HIPCC__)
   #define LGF_HD __host__ __device__
 #else

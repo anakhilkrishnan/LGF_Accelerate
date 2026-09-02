@@ -4,7 +4,7 @@ int main(int argc, char* argv[])
 {
     amrex::Initialize(argc,argv);
 
-    amrex::Print() << "Launching test run for LGF Core...";
+    amrex::Print() << "Launching test run for LGF Core...\n";
     extendedMain();
 
     amrex::Finalize();
@@ -78,19 +78,13 @@ void extendedMain()
     initializeSourceMultiFab(sourceMF, geom);
     targetMF.setVal(0.0);
 
-    
-
-    // DeviceVector to store tag values for each box belonging to this MPI rank
-    const int num_local_boxes = sourceMF.local_size();
-    amrex::Gpu::DeviceVector<int> box_tag_arr(num_local_boxes, 0);
-
     // creating a PoissonSolver object
     std::unique_ptr<LGFPoissonSolver> poisson_solver;
 
     if (solver_type == 1)
     {
         // create object for direct summation solver
-        poisson_solver = std::make_unique<directSumLGF>(geom, n_lookup);    
+        poisson_solver = std::make_unique<DirectSumLGF>(geom, n_lookup);    
     }
     else if (solver_type == 2)
     {
@@ -110,12 +104,12 @@ void extendedMain()
     auto compute_start_time = amrex::second();
 
     // running the tagging algorithmn and obtaining the box tags as an array of 0s and 1s
-    tagSource(box_tag_arr, sourceMF, source_tag_thresh);
+    amrex::BoxArray supp_ba;
+    tagSource(supp_ba, sourceMF, source_tag_thresh);
 
-    poisson_solver->solvePoisson(sourceMF, targetMF, box_tag_arr);
+    poisson_solver->solvePoisson(sourceMF, targetMF, supp_ba);
 
-    // this line is not needed because the code doesn't use the MF again at all, and the plot doesn't use ghost cells
-    // UPDATE: this line is needed for residual computations
+    // this line is needed for residual computations
     targetMF.FillBoundary(geom.periodicity());
 
     // marking end time and elapsed time
@@ -141,13 +135,10 @@ void extendedMain()
     // building a MultiFab to visualize the cells that are being tagged
     amrex::MultiFab tagRegion(sourceMF.boxArray(), sourceMF.DistributionMap(), 1, 0);
 
-    amrex::Vector<int> h_box_tag_arr(num_local_boxes);
-    amrex::Gpu::copy(amrex::Gpu::deviceToHost, box_tag_arr.begin(), box_tag_arr.end(), h_box_tag_arr.begin());
-
-    for (amrex::MFIter mfi(tagRegion); mfi.isValid(); ++mfi) 
+    for (amrex::MFIter mfi(tagRegion); mfi.isValid(); ++mfi)
     {
-        amrex::Real val = (h_box_tag_arr[mfi.LocalIndex()] == 1) ? 1.0 : 0.0;
-        tagRegion[mfi].setVal<amrex::RunOn::Device>(val);
+        const amrex::Box& bx = mfi.validbox();
+        tagRegion[mfi].setVal<amrex::RunOn::Device>(supp_ba.intersects(bx) ? 1.0 : 0.0);
     }
 
     if (write_plot)

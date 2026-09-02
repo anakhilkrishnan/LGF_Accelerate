@@ -26,6 +26,6 @@ class bbfmm2dLGF : public LGFPoissonSolver
 
     bbfmm2dLGF(const amrex::Geometry& geom_in, const int n_look_in, const int n_cheb_in);
     // bbfmm2d does not support source truncation, but argument source_box_tag_arr is maintained to be consistent across solvers
-    void solvePoisson(const amrex::MultiFab& source, amrex::MultiFab& target, const amrex::Gpu::DeviceVector<int>& source_box_tag_arr) override;
+    void solvePoisson(const amrex::MultiFab& source, amrex::MultiFab& target, const amrex::BoxArray& tag_ba) override;
 };
 #endif

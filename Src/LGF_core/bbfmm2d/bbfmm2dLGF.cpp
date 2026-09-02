@@ -6,7 +6,7 @@ bbfmm2dLGF::bbfmm2dLGF(const amrex::Geometry& geom_in, const int n_look_in, cons
        
 }
 
-void bbfmm2dLGF::solvePoisson(const amrex::MultiFab& source, amrex::MultiFab& target, const amrex::Gpu::DeviceVector<int>& source_box_tag_arr)
+void bbfmm2dLGF::solvePoisson(const amrex::MultiFab& source, amrex::MultiFab& target, const amrex::BoxArray& tag_ba)
 {
     // Profiling block for AMReX's TinyProfiler
     BL_PROFILE("<Compute> solveFMM()");

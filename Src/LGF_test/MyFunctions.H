@@ -12,7 +12,7 @@
 #include <string>
 
 #include <LGFPoissonSolver.H>
-#include <directSumLGF.H>
+#include <DirectSumLGF.H>
 #include <bbfmm2dLGF.H>
 
 void extendedMain();

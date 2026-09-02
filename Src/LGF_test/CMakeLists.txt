@@ -6,7 +6,9 @@ add_executable(lgfpoisson
                 MyFunctions.H
                 SourceField.H)
 
-# setup_target_for_cuda_compilation(lgfpoisson)
+if(AMReX_GPU_BACKEND STREQUAL "CUDA")
+    setup_target_for_cuda_compilation(lgfpoisson)
+endif()
 
 find_package(OpenMP REQUIRED)
 target_link_libraries(lgfpoisson PRIVATE OpenMP::OpenMP_CXX)
