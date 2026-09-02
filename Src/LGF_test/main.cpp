@@ -20,6 +20,7 @@ void extendedMain()
     int n_cell, max_grid_size, n_chebyshev, n_lookup, solver_type;
     amrex::Real source_tag_thresh;
     amrex::Array<amrex::Real,AMREX_SPACEDIM> phy_dom_lo, phy_dom_hi;
+    bool nodal_compute = false;
     bool write_plot = false;
     bool compare_MLMG = false;
 
@@ -37,6 +38,7 @@ void extendedMain()
     pp.get("n_lookup", n_lookup);
 
     pp.query("solver_type", solver_type);
+    pp.query("nodal_compute", nodal_compute);
     pp.query("write_plot", write_plot);
     pp.query("plot_prefix", plot_prefix);
     pp.query("compare_MLMG", compare_MLMG);
@@ -61,6 +63,9 @@ void extendedMain()
     // Break up boxarray "ba" into chunks no larger than "max_grid_size" along a direction
     ba.maxSize(max_grid_size);
 
+    // branch for nodal compute, beyond this, always use ba_in_use
+    amrex::BoxArray ba_in_use = (nodal_compute) ? amrex::convert(ba, amrex::IntVect::TheNodeVector()) : ba;
+
     // This defines the physical box, [0,1] in each direction.
     amrex::RealBox real_box(phy_dom_lo, phy_dom_hi);
 
@@ -68,11 +73,12 @@ void extendedMain()
     geom.define(domain,&real_box,amrex::CoordSys::cartesian,is_periodic.data());
 
     // How Boxes are distrubuted among MPI processes
-    amrex::DistributionMapping dm(ba);
+    amrex::DistributionMapping dm(ba_in_use);
 
+    
     // creating source and target multifabs
-    amrex::MultiFab sourceMF(ba, dm, n_comp, n_ghost);
-    amrex::MultiFab targetMF(ba, dm, n_comp, n_ghost);
+    amrex::MultiFab sourceMF(ba_in_use, dm, n_comp, n_ghost);
+    amrex::MultiFab targetMF(ba_in_use, dm, n_comp, n_ghost);
 
     // initializing multifabs
     initializeSourceMultiFab(sourceMF, geom);
@@ -107,7 +113,14 @@ void extendedMain()
     amrex::BoxArray supp_ba;
     tagSource(supp_ba, sourceMF, source_tag_thresh);
 
-    poisson_solver->solvePoisson(sourceMF, targetMF, supp_ba);
+    if (!nodal_compute)
+    {
+        poisson_solver->solvePoisson(sourceMF, targetMF, supp_ba);
+    }
+    else
+    {
+        poisson_solver->solveNodalPoisson(sourceMF, targetMF, supp_ba);
+    }
 
     // this line is needed for residual computations
     targetMF.FillBoundary(geom.periodicity());
@@ -120,9 +133,9 @@ void extendedMain()
     amrex::MultiFab residual = computeResidual(sourceMF, targetMF, geom);
     amrex::Print() << "Max. Abs. Residual: " << residual.norminf() << "\n";
 
-    amrex::MultiFab targetMLMG(ba, dm, n_comp, n_ghost);
+    amrex::MultiFab targetMLMG(ba_in_use, dm, n_comp, n_ghost);
     targetMLMG.setVal(0.0);
-    if (compare_MLMG)
+    if (compare_MLMG && !nodal_compute)
     {
         auto mlmg_start_time = amrex::second();
         syncBCs(targetMLMG, targetMF, geom, n_ghost);
@@ -133,12 +146,12 @@ void extendedMain()
     }
     
     // building a MultiFab to visualize the cells that are being tagged
-    amrex::MultiFab tagRegion(sourceMF.boxArray(), sourceMF.DistributionMap(), 1, 0);
+    amrex::MultiFab tagRegion(ba_in_use, sourceMF.DistributionMap(), 1, 0);
 
     for (amrex::MFIter mfi(tagRegion); mfi.isValid(); ++mfi)
     {
         const amrex::Box& bx = mfi.validbox();
-        tagRegion[mfi].setVal<amrex::RunOn::Device>(supp_ba.intersects(bx) ? 1.0 : 0.0);
+        tagRegion[mfi].setVal<amrex::RunOn::Device>(supp_ba.intersects(amrex::enclosedCells(bx)) ? 1.0 : 0.0);
     }
 
     if (write_plot)
@@ -147,7 +160,7 @@ void extendedMain()
         BL_PROFILE("<I/O> writingPlotfile");
 
         // building a multiFab with 4 + MLMG components for plotting
-        int numPlotComp = compare_MLMG ? 5 : 4;
+        int numPlotComp = (compare_MLMG && !nodal_compute) ? 5 : 4;
         amrex::MultiFab plotFab(targetMF.boxArray(), targetMF.DistributionMap(), numPlotComp, 0);
         amrex::MultiFab::Copy(plotFab, sourceMF, 0, 0, 1, 0);
         amrex::MultiFab::Copy(plotFab, targetMF, 0, 1, 1, 0);
@@ -157,7 +170,7 @@ void extendedMain()
         // exporting the names of the MultiFabs
         amrex::Vector<std::string> varnames = {"Source_Phi", "Target_Phi", "Active_Box_Tag", "Residual"};
 
-        if (compare_MLMG)
+        if (compare_MLMG && !nodal_compute)
         {
             amrex::MultiFab::Copy(plotFab, targetMLMG, 0, (numPlotComp-1), 1, 0);
             varnames.push_back("MLMG_Target_Phi");

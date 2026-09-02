@@ -4,7 +4,7 @@ using namespace amrex;
 
 void tagSource(amrex::BoxArray& tag_ba, const amrex::MultiFab& phi, const amrex::Real tag_thresh)
 {
-    // creating boxArray that signifies support region
+    // creating boxArray that signifies support region, always cell-centered
 
     // adding profiling blocks for Tiny/Base profilers
     BL_PROFILE("<Compute> tagSource()");

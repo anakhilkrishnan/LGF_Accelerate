@@ -221,6 +221,10 @@ void DirectSumLGF::solvePoisson(const amrex::MultiFab& source, amrex::MultiFab& 
     // adding profiling blocks for Tiny/Base profilers
     BL_PROFILE("<Compute> solvePoisson()");
 
+    AMREX_ALWAYS_ASSERT(source.ixType() == amrex::IndexType::TheCellType());
+    AMREX_ALWAYS_ASSERT(target.ixType() == amrex::IndexType::TheCellType());
+    AMREX_ALWAYS_ASSERT(source.boxArray().size() == target.boxArray().size());
+
     // extract cell-sizes and physical dom_lo for x,y,z computations
     amrex::GpuArray<amrex::Real, AMREX_SPACEDIM> dx = geom.CellSizeArray();
     amrex::GpuArray<amrex::Real, AMREX_SPACEDIM> prob_lo = geom.ProbLoArray();

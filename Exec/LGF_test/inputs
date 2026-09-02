@@ -8,7 +8,8 @@ tagging_threshold = 0.0
 domain_lo = -5.0 -5.0 -5.0
 domain_hi = 5.0 5.0 5.0
 
-solver_type = 2
+solver_type = 1
+nodal_compute = true
 n_chebyshev = 16
 n_lookup = 32
 
