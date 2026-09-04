@@ -40,7 +40,12 @@ amrex::Real computeLGF(int n_lookup,
 #endif
 
 #if AMREX_SPACEDIM == 3
+    if ((nx * nx + ny * ny + nz * nz <= ((n_lookup - 1) * (n_lookup - 1))))
+    {
+        return nearField3D(nx, ny, nz);
+    }
 
+    return farField3D(deltax, deltay, deltaz);
 #endif
 }
 

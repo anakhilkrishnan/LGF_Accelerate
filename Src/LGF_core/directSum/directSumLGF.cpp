@@ -286,7 +286,7 @@ void DirectSumLGF::solvePoisson(const amrex::MultiFab& source, amrex::MultiFab& 
                 const auto& block = meta_ptr[b];
                 int idx = block.offset;
 
-                amrex::Real dvol = AMREX_D_TERM(block.dx[0], * block.dx[1], * block.dx[2]);
+                amrex::Real dvol = block.dx[0] * block.dx[0];
                 
                 // Unpack and sum every cell in the source block
                 for (int sk = AMREX_D_PICK(0, 0, block.lo[2]); sk <= AMREX_D_PICK(0, 0, block.hi[2]); ++sk) 
@@ -388,7 +388,7 @@ void DirectSumLGF::solveNodalPoisson(const amrex::MultiFab& source, amrex::Multi
             {
                 const auto& block = meta_ptr[b];
                 int idx = block.offset;
-                amrex::Real dvol = AMREX_D_TERM(block.dx[0], * block.dx[1], * block.dx[2]);
+                amrex::Real dvol = block.dx[0] * block.dx[0];
                 
                 for (int sk = AMREX_D_PICK(0, 0, block.lo[2]); sk <= AMREX_D_PICK(0, 0, block.hi[2]); ++sk) 
                 {

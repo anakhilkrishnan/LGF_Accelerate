@@ -1,8 +1,3 @@
-# add files from BBFMM2d submodule
-file(GLOB BBFMM2D_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/BBFMM2D/src/*.cpp")
-file(GLOB BBFMM2D_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/BBFMM2D/header/*.hpp" )
-
-# Define the library and its source files
 add_library(LGF_core_lib STATIC
     LGFPoissonSolver.H
     tagSource.cpp
@@ -10,12 +5,19 @@ add_library(LGF_core_lib STATIC
     directSum/directSumKernel.H
     directSum/DirectSumLGF.H
     directSum/directSumLGF.cpp
-    bbfmm2d/bbfmm2dKernel.H
-    bbfmm2d/bbfmm2dLGF.H
-    bbfmm2d/bbfmm2dLGF.cpp
-    ${BBFMM2D_SOURCES}
-    ${BBFMM2D_HEADERS}
 )
+
+if(AMReX_SPACEDIM EQUAL 2)
+    file(GLOB BBFMM2D_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/BBFMM2D/src/*.cpp")
+    file(GLOB BBFMM2D_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/BBFMM2D/header/*.hpp")
+    target_sources(LGF_core_lib PRIVATE
+        bbfmm2d/bbfmm2dKernel.H bbfmm2d/bbfmm2dLGF.H bbfmm2d/bbfmm2dLGF.cpp
+        ${BBFMM2D_SOURCES} ${BBFMM2D_HEADERS})
+    target_include_directories(LGF_core_lib PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/bbfmm2d
+        ${CMAKE_CURRENT_SOURCE_DIR}/../ThirdParty/BBFMM2D/header)
+    target_link_libraries(LGF_core_lib PUBLIC Eigen3::Eigen)
+endif()
 
 if(AMReX_GPU_BACKEND STREQUAL "CUDA")
     setup_target_for_cuda_compilation(LGF_core_lib)

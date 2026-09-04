@@ -15,7 +15,9 @@
 
 #include <LGFPoissonSolver.H>
 #include <DirectSumLGF.H>
-#include <bbfmm2dLGF.H>
+#if AMREX_SPACEDIM == 2
+    #include <bbfmm2dLGF.H>
+#endif
 
 void extendedMain();
 

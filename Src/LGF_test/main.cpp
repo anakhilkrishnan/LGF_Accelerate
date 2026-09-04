@@ -92,11 +92,13 @@ void extendedMain()
         // create object for direct summation solver
         poisson_solver = std::make_unique<DirectSumLGF>(geom, n_lookup);    
     }
+#if AMREX_SPACEDIM == 2
     else if (solver_type == 2)
     {
         // create object for bbfmm2d solver
         poisson_solver = std::make_unique<bbfmm2dLGF>(geom, n_lookup, n_chebyshev);
     }
+#endif
     else if (solver_type == 3)
     {   
         // create object for advanced FMM library
