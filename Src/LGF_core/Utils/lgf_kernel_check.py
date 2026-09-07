@@ -295,5 +295,5 @@ ax6.legend(fontsize=8)
 ax6.grid(True, alpha=0.3)
 
 plt.tight_layout()
-plt.savefig('/home/claude/lgf_kernel_comparison.png', dpi=130, bbox_inches='tight')
+plt.savefig('lgf_kernel_comparison.png', dpi=130, bbox_inches='tight')
 print("\nSaved plot to lgf_kernel_comparison.png")

@@ -3,8 +3,7 @@
 DirectSumLGF::DirectSumLGF(const amrex::Geometry& geom_in, const int n_look_in) 
     : geom(geom_in), n_lookup(n_look_in)
 {
-    AMREX_ALWAYS_ASSERT_WITH_MESSAGE(n_lookup <= 32 && n_lookup >= 1,
-                                     "n_lookup must be in [1,32] to stay inside exact_core");
+    AMREX_ALWAYS_ASSERT_WITH_MESSAGE(n_lookup >= 1, "n_lookup must be >=1 for using lookup table");
 }
 
 // Note: This function does not use tiling because all indexing and box tag reading requires use of boxes as the smallest
