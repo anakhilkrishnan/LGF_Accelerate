@@ -36,6 +36,14 @@ add_custom_command(TARGET lgfpoisson POST_BUILD
     COMMENT "Syncing jobscript to Exec/LGF_test..."
 )
 
+# Update the gpu jobscript file sync command to follow the binary
+add_custom_command(TARGET lgfpoisson POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${CMAKE_CURRENT_SOURCE_DIR}/Utils/multicase_gpu.sh"
+    "${CMAKE_SOURCE_DIR}/Exec/LGF_test/multicase_gpu.sh"
+    COMMENT "Syncing GPU jobscript to Exec/LGF_test..."
+)
+
 # Update the postProcess python file sync command to follow the binary
 add_custom_command(TARGET lgfpoisson POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different

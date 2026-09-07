@@ -1,0 +1,50 @@
+#!/bin/sh
+
+#SBATCH --job-name=LGF_Accelerate_run
+#SBATCH --partition=gpusinglenode
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=2
+#SBATCH --gres=gpu:2
+#SBATCH --time=01:00:00
+#SBATCH --error=job.%J.err
+#SBATCH --output=job.%J.out
+
+# Ensure the correctly configured CUDAROOT path is loaded
+source ~/.bashrc
+
+# Environment Initialization 
+# (PARAM Pravega often utilizes 'spack load' alongside standard modules, adjust if required)
+module load openmpi/openmpi_4.0.5_ucx_cuda_11.2_with_gcc
+
+# MPI and Networking Parameters
+export OMPI_MCA_btl_openib_allow_ib=1
+export OMPI_MCA_btl_openib_if_include="mlx5_0:1"
+export OMP_NUM_THREADS=1
+
+# OpenMPI parameters
+export OMPI_MCA_pml=ucx
+export OMPI_MCA_osc=ucx
+export UCX_TLS=rc,sm,cuda_copy,cuda_ipc
+export UCX_MEMTYPE_CACHE=n
+export UCX_RNDV_THRESH=8192
+
+export AMREX_USE_GPU_AWARE_MPI=1
+
+ulimit -s unlimited
+
+cd $SLURM_SUBMIT_DIR
+
+# Small .sh file to correctly choose GPUs and map to each rank
+cat > select_gpu.sh <<'EOF'
+#!/bin/bash
+export CUDA_VISIBLE_DEVICES=$OMPI_COMM_WORLD_LOCAL_RANK
+exec "$@"
+EOF
+chmod +x select_gpu.sh
+
+EXEC="./lgfpoisson"
+INPUTS_FILE="inputs"
+for n in 64 128 256 512; do
+    mpiexec -n $SLURM_NTASKS ./select_gpu.sh $EXEC $INPUTS_FILE n_cell=$n max_grid_size=16 plot_prefix=./Results/plt | tee ./Logs/log_n${n}.txt
+done
+
