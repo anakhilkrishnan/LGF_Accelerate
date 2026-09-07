@@ -1,21 +1,29 @@
 cmake_minimum_required(VERSION 3.16)
 
+# custom options for convenience
+option(ENABLE_BBFMM2D "Enable bbfmm2d library" NO)
+
 project(LGF_Accelerate LANGUAGES C CXX)
 
 # typical values (included for ease of building)
 set(CMAKE_BUILD_TYPE "Release" CACHE STRING "cmake build type")
-set(AMReX_SPACEDIM "2" CACHE STRING "Spatial Dimension")
+set(AMReX_SPACEDIM "3" CACHE STRING "Spatial Dimension")
 set(AMReX_MPI YES CACHE BOOL "Enable MPI")
 set(AMReX_TINY_PROFILE YES CACHE BOOL "Enable Tiny Profiling")
 set(AMReX_MEM_PROFILE YES CACHE BOOL "Enable Memory Profiling")
-set(AMReX_GPU_BACKEND "CUDA" CACHE STRING "Enable NVIDIA GPUs")
-set(CMAKE_CUDA_ARCHITECTURES "86" CACHE STRING "GPU Compute Capability")
-# enable OpenMP by passing a flag when needed; also disable GPU_BACKEND when 
-# compiling for CPU builds
+
+if(AMReX_OMP)
+  find_package(OpenMP REQUIRED)
+endif()
 
 if(AMReX_GPU_BACKEND STREQUAL "CUDA")
   enable_language(CUDA)
   # always specify CMAKE_CUDA_ARCHITECTURES at compile time on every machine
+endif()
+
+if (ENABLE_BBFMM2D)
+  # find Eigen3 installation on the system
+  find_package(Eigen3 REQUIRED)
 endif()
 
 if(NOT TARGET AMReX::amrex)
@@ -36,9 +44,6 @@ if(NOT TARGET AMReX::amrex)
 else()
   message(STATUS "LGF_Accelerate: Using AMReX provided by parent project.")
 endif()
-
-# find Eigen3 installation on the system
-find_package(Eigen3 REQUIRED)
 
 # building as static library
 add_subdirectory(Src/LGF_core)
