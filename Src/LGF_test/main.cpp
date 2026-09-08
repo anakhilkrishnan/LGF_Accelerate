@@ -102,7 +102,7 @@ void extendedMain()
     else if (solver_type == 3)
     {   
         // create object for advanced FMM library
-        amrex::Abort("Solver_type requested not built yet.");
+        poisson_solver = std::make_unique<LGFOpenBC>(geom, n_lookup);
     }
     else
     {
