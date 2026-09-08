@@ -96,7 +96,7 @@ void extendedMain()
     else if (solver_type == 2)
     {
         // create object for bbfmm2d solver
-        poisson_solver = std::make_unique<bbfmm2dLGF>(geom, n_lookup, n_chebyshev);
+        // poisson_solver = std::make_unique<bbfmm2dLGF>(geom, n_lookup, n_chebyshev);
     }
 #endif
     else if (solver_type == 3)
