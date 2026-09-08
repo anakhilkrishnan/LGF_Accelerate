@@ -63,15 +63,10 @@ private:
     amrex::Box makeDomain (const amrex::MultiFab& target,
                            const amrex::BoxArray& tag_ba) const;
 
-    //! Build the solver and its spectral Green's function if the domain changed.
-    void ensureSolver (const amrex::Box& domain);
-
-    void doSolve (const amrex::MultiFab& source, amrex::MultiFab& target,
-                  const amrex::BoxArray& tag_ba);
 
 public:
 
-    LGFOpenBC (const amrex::Geometry& geom_in, int n_look_in, int box_quantum_in = 32);
+    LGFOpenBC (const amrex::Geometry& geom_in, int n_look_in, int box_quantum_in = 1);
 
     void solvePoisson (const amrex::MultiFab& source, amrex::MultiFab& target,
                        const amrex::BoxArray& tag_ba) override;
@@ -81,6 +76,12 @@ public:
 
     void regridOnto (const amrex::Geometry& new_geom, const amrex::BoxArray& new_ba,
                      const amrex::DistributionMapping& new_dm) override;
+
+    //! Build the solver and its spectral Green's function if the domain changed.
+    void ensureSolver (const amrex::Box& domain);
+
+    void doSolve (const amrex::MultiFab& source, amrex::MultiFab& target,
+                  const amrex::BoxArray& tag_ba);
 
     //! Padded one-sided length of the cached solver, for logging. Zero if none.
     [[nodiscard]] amrex::IntVect paddedLength () const;
