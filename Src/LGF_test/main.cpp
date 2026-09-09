@@ -17,7 +17,7 @@ void extendedMain()
     auto start_time = amrex::second();
 
     // variables to be read from ParmParse
-    int n_cell, max_grid_size, n_chebyshev, n_lookup, solver_type;
+    int n_cell, max_grid_size, n_lookup, solver_type;
     amrex::Real source_tag_thresh;
     amrex::Array<amrex::Real,AMREX_SPACEDIM> phy_dom_lo, phy_dom_hi;
     bool nodal_compute = false;
@@ -34,7 +34,6 @@ void extendedMain()
     pp.get("domain_lo", phy_dom_lo);
     pp.get("domain_hi", phy_dom_hi);
     pp.get("tagging_threshold", source_tag_thresh);
-    pp.get("n_chebyshev", n_chebyshev);
     pp.get("n_lookup", n_lookup);
 
     pp.query("solver_type", solver_type);
@@ -92,16 +91,9 @@ void extendedMain()
         // create object for direct summation solver
         poisson_solver = std::make_unique<DirectSumLGF>(geom, n_lookup);    
     }
-#if AMREX_SPACEDIM == 2
     else if (solver_type == 2)
-    {
-        // create object for bbfmm2d solver
-        // poisson_solver = std::make_unique<bbfmm2dLGF>(geom, n_lookup, n_chebyshev);
-    }
-#endif
-    else if (solver_type == 3)
     {   
-        // create object for advanced FMM library
+        // create object for AMReX FMM library
         poisson_solver = std::make_unique<LGFOpenBC>(geom, n_lookup);
     }
     else

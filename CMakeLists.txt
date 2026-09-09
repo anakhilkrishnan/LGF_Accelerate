@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
 
-# custom options for convenience
-option(ENABLE_BBFMM2D "Enable bbfmm2d library" NO)
-
 project(LGF_Accelerate LANGUAGES C CXX)
 
 # typical values (included for ease of building)
@@ -19,11 +16,6 @@ endif()
 if(AMReX_GPU_BACKEND STREQUAL "CUDA")
   enable_language(CUDA)
   # always specify CMAKE_CUDA_ARCHITECTURES at compile time on every machine
-endif()
-
-if (ENABLE_BBFMM2D)
-  # find Eigen3 installation on the system
-  find_package(Eigen3 REQUIRED)
 endif()
 
 if(NOT TARGET AMReX::amrex)

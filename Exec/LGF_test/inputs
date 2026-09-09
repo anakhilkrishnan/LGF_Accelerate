@@ -10,7 +10,6 @@ domain_hi = 5.0 5.0 5.0
 
 solver_type = 1
 nodal_compute = true
-n_chebyshev = 16
 n_lookup = 32
 
 compare_MLMG = false

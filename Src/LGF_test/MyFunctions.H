@@ -16,7 +16,6 @@
 #include <LGFPoissonSolver.H>
 #include <DirectSumLGF.H>
 #include <LGFOpenBC.H>
-// #include <bbfmm2dLGF.H>
 
 void extendedMain();
 
