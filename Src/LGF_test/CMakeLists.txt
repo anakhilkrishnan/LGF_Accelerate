@@ -36,11 +36,19 @@ add_custom_command(TARGET lgfpoisson POST_BUILD
     COMMENT "Syncing jobscript to Exec/LGF_test..."
 )
 
-# Update the gpu jobscript file sync command to follow the binary
+# Update the gpu jobscript file for param pravega
 add_custom_command(TARGET lgfpoisson POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    "${CMAKE_CURRENT_SOURCE_DIR}/Utils/multicase_gpu.sh"
-    "${CMAKE_SOURCE_DIR}/Exec/LGF_test/multicase_gpu.sh"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Utils/multicase_gpu_pravega.sh"
+    "${CMAKE_SOURCE_DIR}/Exec/LGF_test/multicase_gpu_pravega.sh"
+    COMMENT "Syncing Param Pravega GPU jobscript to Exec/LGF_test..."
+)
+
+# Update the gpu jobscript file for param pravega
+add_custom_command(TARGET lgfpoisson POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${CMAKE_CURRENT_SOURCE_DIR}/Utils/multicase_gpu_rudra.sh"
+    "${CMAKE_SOURCE_DIR}/Exec/LGF_test/multicase_gpu_rudra.sh"
     COMMENT "Syncing GPU jobscript to Exec/LGF_test..."
 )
 

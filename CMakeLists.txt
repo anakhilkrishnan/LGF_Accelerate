@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.18)
 
 project(LGF_Accelerate LANGUAGES C CXX)
 
@@ -6,6 +6,7 @@ project(LGF_Accelerate LANGUAGES C CXX)
 set(CMAKE_BUILD_TYPE "Release" CACHE STRING "cmake build type")
 set(AMReX_SPACEDIM "3" CACHE STRING "Spatial Dimension")
 set(AMReX_MPI YES CACHE BOOL "Enable MPI")
+set(AMReX_FFT YES CACHE BOOL "Enable FFT")
 set(AMReX_TINY_PROFILE YES CACHE BOOL "Enable Tiny Profiling")
 set(AMReX_MEM_PROFILE YES CACHE BOOL "Enable Memory Profiling")
 
@@ -26,12 +27,12 @@ if(NOT TARGET AMReX::amrex)
     set(FETCHCONTENT_QUIET OFF)
     FetchContent_Declare(
         amrex_code
-        GIT_REPOSITORY https://github.com/AMReX-Codes/amrex.git/
-        GIT_TAG        origin/development
+        GIT_REPOSITORY https://github.com/AMReX-Codes/amrex.git
+        GIT_TAG        26.09
     )
     FetchContent_MakeAvailable(amrex_code)
   else()
-    find_package(AMReX REQUIRED PATHS ${AMReX_ROOT}/lib/cmake/AMReX/AMReXConfig.cmake)
+    find_package(AMReX REQUIRED PATHS ${AMReX_ROOT}/lib/cmake/AMReX)
   endif()
 else()
   message(STATUS "LGF_Accelerate: Using AMReX provided by parent project.")
