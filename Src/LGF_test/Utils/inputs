@@ -1,15 +1,16 @@
 amrex.max_gpu_streams=4
+amrex.abort_on_out_of_gpu_memory=1
 
 n_cell = 512
-max_grid_size = 512
+max_grid_size = 16
 
-tagging_threshold = 0.0
+tagging_threshold = 1.0e-8
 
 domain_lo = -5.0 -5.0 -5.0
 domain_hi = 5.0 5.0 5.0
 
-solver_type = 1
-nodal_compute = true
+solver_type = 2
+nodal_compute = false
 n_lookup = 32
 
 compare_MLMG = false

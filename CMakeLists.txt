@@ -28,7 +28,7 @@ if(NOT TARGET AMReX::amrex)
     FetchContent_Declare(
         amrex_code
         GIT_REPOSITORY https://github.com/AMReX-Codes/amrex.git
-        GIT_TAG        26.09
+        GIT_TAG        origin/development
     )
     FetchContent_MakeAvailable(amrex_code)
   else()
